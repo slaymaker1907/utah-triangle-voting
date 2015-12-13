@@ -1,0 +1,87 @@
+{% extends "voting/header.html" %}
+{% block title %}Votes #1234 Results{% endblock %}
+{% block content %}
+{% load staticfiles %}
+<div class="container theme-showcase" role="main">
+	{% include "voting/navbar.html" %}
+	
+	<h1>Formal Poll</h1>
+	
+	<hr></hr>
+	
+	<h3>Places for Formal</h3>
+	
+	<hr></hr>
+	
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="panel panel-success">
+				<div class="panel-heading">
+					<h3 class="panel-title">Results</h3>
+				</div>
+				<ul class="list-group">
+					<li class="list-group-item">
+						<h4 class="list-group-item-heading">Zion</h4>
+						<p class="list-group-item-text">7 Votes</p>
+					</li>
+					<li class="list-group-item">
+						<h4 class="list-group-item-heading">Bryce Canyon</h4>
+						<p class="list-group-item-text">10 Votes</p>
+					</li>
+					<li class="list-group-item">
+						<h4 class="list-group-item-heading">Grand Junction</h4>
+						<p class="list-group-item-text">3 Votes</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-sm-8">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Graphical Data</h3>
+				</div>
+				<div>
+					<canvas id="chart1"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<hr></hr>
+	<h3>Should Triangle Have Formal Shirts?</h3>
+	<hr></hr>
+	
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="panel panel-success">
+				<div class="panel-heading">
+					<h3 class="panel-title">Results</h3>
+				</div>
+				<ul class="list-group">
+					<li class="list-group-item">
+						<h4 class="list-group-item-heading">Yes</h4>
+						<p class="list-group-item-text">17 Votes</p>
+					</li>
+					<li class="list-group-item">
+						<h4 class="list-group-item-heading">No</h4>
+						<p class="list-group-item-text">3 Votes</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-sm-8">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Graphical Data</h3>
+				</div>
+				<div>
+					<canvas id="chart2"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div> <!-- /container -->
+<script src="{% static 'voting/js/chart.min.js' %}"></script>
+<script src="{% static 'voting/js/plot_results.js' %}"></script>
+{% endblock %} <!-- Ending the content block -->

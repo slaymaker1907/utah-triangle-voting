@@ -1,0 +1,87 @@
+{% extends "voting/header.html" %}
+{% block title %}Votes #1234 Results{% endblock %}
+{% block content %}
+<div class="container theme-showcase" role="main">
+	{% include "voting/navbar.html" %}
+	
+	<h1>Vote #1234 Results</h1>
+	
+	<h3>President</h3>
+	<hr></hr>
+	
+	<div class="alert alert-success">
+		<strong>Ranking:</strong> Santa Clause, Harry Potter, and Gandalf.
+	</div>
+	
+	<table class="table table-condensed">
+		<thead>
+			<tr>
+				<th>Santa Clause</th>
+				<th>Harry Potter</th>
+				<th>Gandalf</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>2</td>
+				<td>3</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>1</td>
+				<td>2</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td></td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<hr></hr>
+	<h3>Secretary</h3>
+	<hr></hr>
+	
+	<div class="alert alert-success">
+		<strong>Ranking:</strong> Harry Potter; Santa Clause; and tie between Gandalf, Hermione, and Pedro.</strong>
+	</div>
+	
+	<table class="table table-condensed">
+		<thead>
+			<tr>
+				<th>Santa Clause</th>
+				<th>Harry Potter</th>
+				<th>Gandalf</th>
+				<th>Hermione</th>
+				<th>Pedro</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>2</td>
+				<td>3</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>1</td>
+				<td></td>
+				<td>4</td>
+				<td>3</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>1</td>
+				<td>5</td>
+				<td>2</td>
+				<td>4</td>
+			</tr>
+		</tbody>
+	</table>
+	
+</div> <!-- /container -->
+{% endblock %} <!-- Ending the content block -->

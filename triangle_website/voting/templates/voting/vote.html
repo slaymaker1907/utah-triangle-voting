@@ -1,17 +1,19 @@
 {% extends "voting/header.html" %}
 {% block title %}Vote #1234{% endblock %}
 {% block content %}
+{% include "voting/navbar.html" %}
 <div class="container theme-showcase" role="main">
 	<div class="page-header">
 		<h1>Presidential Election Fall 2016</h1>
 	</div>
 	
 	<div>
-		<form class="form-horizontal" role="form">
+		<form class="form-horizontal" role="form" action="{% url "voting:results" 1%}" method="post">
+		{% csrf_token %}
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="email">Username:</label>
+				<label class="control-label col-sm-2" for="username">Username:</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="text" placeholder="Enter username"></input>
+					<input type="text" class="form-control" id="username" placeholder="Enter username"></input>
 				</div>
 			</div>
 			<div class="form-group">
@@ -106,7 +108,7 @@
 			</div>
 			<div class="form-group"> 
 				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-primary">Submit</button>
+					<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> Submit</button>
 				</div>
 			</div>
 		</form>

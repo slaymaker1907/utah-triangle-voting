@@ -8,7 +8,7 @@
 	<!-- Main jumbotron for a primary marketing message or call to action -->
 	<div class="jumbotron">
 		<h1>Voting for Utah Triangle</h1>
-		<p>Examine the various votes available as well as the results of completed elections. If a vote isn't visible, ensure that you have the correct permissions to see the vote or search for the vote using the vote's ID.<a class="btn btn-primary btn-lg" href="#" role="button">Create New Vote <span class="glyphicon glyphicon-plus"></span></a></p>
+		<p>Examine the various votes available as well as the results of completed elections. If a vote isn't visible, ensure that you have the correct permissions to see the vote or search for the vote using the vote's ID.<a class="btn btn-primary btn-lg" href="{% url 'voting:create' %}" role="button">Create New Vote <span class="glyphicon glyphicon-plus"></span></a></p>
 	</div>
 
 	<div class="row">
@@ -19,15 +19,15 @@
 				</div>
 				<div class="panel-body">
 					<ul class="list-group">
-						<a href="{% url 'voting:vote' 1 %}" class="list-group-item">
+						<a href="{% url 'voting:vote' 1234 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #1234</h4>
 							<p class="list-group-item-text">President Fall 2016</p>
 						</a>
-						<a href="{% url 'voting:vote' 1 %}" class="list-group-item">
+						<a href="{% url 'voting:vote' 1235 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #1235</h4>
 							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
 						</a>
-						<a href="{% url 'voting:vote' 1 %}" class="list-group-item">
+						<a href="{% url 'voting:vote' 1236 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #1236</h4>
 							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
 						</a>
@@ -38,35 +38,36 @@
 		<div class="col-sm-6">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title">Completed Votes</h3>
+					<h3 class="panel-title">Completed Votes <button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-stats"></span> Full History</button></h3>
 				</div>
 				<div class="panel-body">
 					<ul class="list-group">
-						<a href="#" class="list-group-item">
+						<a href="{% url 'voting:results' 0 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #0</h4>
 							<p class="list-group-item-text">Sandwich Maker Fall 2015</p>
 						</a>
-						<a href="#" class="list-group-item">
+						<a href="{% url 'voting:results' 1 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #1</h4>
 							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
 						</a>
-						<a href="#" class="list-group-item">
+						<a href="{% url 'voting:results' 2 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #2</h4>
 							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
 						</a>
-						<a href="#" class="list-group-item">
+						<a href="{% url 'voting:results' 3 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #3</h4>
 							<p class="list-group-item-text">President Fall 2016</p>
 						</a>
-						<a href="#" class="list-group-item">
+						<a href="{% url 'voting:results' 4 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #4</h4>
 							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
 						</a>
-						<a href="#" class="list-group-item">
+						<a href="{% url 'voting:results' 5 %}" class="list-group-item">
 							<h4 class="list-group-item-heading">Vote #5</h4>
 							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
 						</a>
-					</ul>				</div>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
