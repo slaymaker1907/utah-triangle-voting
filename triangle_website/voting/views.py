@@ -6,7 +6,10 @@ def voting_index(request):
 	return render(request, 'voting/index.html')
 	
 def vote_page(request, vote_id):
-	return render(request, 'voting/vote.html')
+	if vote_id == "1234":
+		return render(request, 'voting/vote.html')
+	else:
+		return render(request, 'voting/vote_poll.html')
 	
 def results_page(request, vote_id):
 	if vote_id == "0":
