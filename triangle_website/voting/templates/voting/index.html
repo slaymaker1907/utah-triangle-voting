@@ -1,112 +1,74 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="{% static 'voting/images/favicon.ico' %}">
+{% extends "voting/header.html" %}
+{% block title %}Utah Triangle Voting{% endblock %}
+{% block content %}
+<div class="container theme-showcase" role="main">
 
-    <title>Voting for Utah Triangle</title>
+	{% include "voting/navbar.html" %}
 
-    <!-- Bootstrap core CSS -->
-    <link href="{% static 'voting/bootstrap-3.3.6/css/bootstrap.min.css' %}" rel="stylesheet">
-    <!-- Bootstrap theme -->
-    <link href="{% static 'voting/bootstrap-3.3.6/css/bootstrap-theme.min.css' %}" rel="stylesheet">
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="{% static 'voting/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+	<!-- Main jumbotron for a primary marketing message or call to action -->
+	<div class="jumbotron">
+		<h1>Voting for Utah Triangle</h1>
+		<p>Examine the various votes available as well as the results of completed elections. If a vote isn't visible, ensure that you have the correct permissions to see the vote or search for the vote using the vote's ID.<a class="btn btn-primary btn-lg" href="#" role="button">Create New Vote <span class="glyphicon glyphicon-plus"></span></a></p>
+	</div>
 
-    <!-- Custom styles for this template -->
-    <link href="{% static 'voting/css/theme.css' %}" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-
-  <body role="document">
-    <div class="container theme-showcase" role="main">
-
-      <!-- Main jumbotron for a primary marketing message or call to action -->
-      <div class="jumbotron">
-        <h1>Voting for Utah Triangle</h1>
-        <p>Examine the various votes available as well as the results of completed elections. If a vote isn't visible, ensure that you have the correct permissions to see the vote or search for the vote using the vote's ID.<a class="btn btn-primary btn-lg" href="#" role="button">Create New Vote &raquo;</a></p>
-      </div>
-	  
-	  <div class="row">
-		  <div class="col-sm-6">
-			  <div class="panel panel-primary">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="panel panel-primary">
 				<div class="panel-heading">
-				  <h3 class="panel-title">Current Votes</h3>
+					<h3 class="panel-title">Current Votes</h3>
 				</div>
 				<div class="panel-body">
-				<ul class="list-group">
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">Vote #1234</h4>
-					  <p class="list-group-item-text">President Fall 2016</p>
-					</a>
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">List group item heading</h4>
-					  <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					</a>
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">List group item heading</h4>
-					  <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					</a>
-				</ul>
+					<ul class="list-group">
+						<a href="{% url 'voting:vote' 1 %}" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #1234</h4>
+							<p class="list-group-item-text">President Fall 2016</p>
+						</a>
+						<a href="{% url 'voting:vote' 1 %}" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #1235</h4>
+							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+						</a>
+						<a href="{% url 'voting:vote' 1 %}" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #1236</h4>
+							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+						</a>
+					</ul>
 				</div>
-			  </div>
-		  </div>
-		  <div class="col-sm-6">
-			  <div class="panel panel-primary">
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="panel panel-primary">
 				<div class="panel-heading">
-				  <h3 class="panel-title">Completed Votes</h3>
+					<h3 class="panel-title">Completed Votes</h3>
 				</div>
 				<div class="panel-body">
-				<ul class="list-group">
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">Vote #0000</h4>
-					  <p class="list-group-item-text">Sandwich Maker Fall 2015</p>
-					</a>
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">List group item heading</h4>
-					  <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					</a>
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">List group item heading</h4>
-					  <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					</a>
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">Vote #1234</h4>
-					  <p class="list-group-item-text">President Fall 2016</p>
-					</a>
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">List group item heading</h4>
-					  <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					</a>
-					<a href="#" class="list-group-item">
-					  <h4 class="list-group-item-heading">List group item heading</h4>
-					  <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					</a>
-				</ul>				</div>
-			  </div>
-		  </div>
-	  </div>
-    </div> <!-- /container -->
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="{% static 'voting/bootstrap-3.3.6/js/bootstrap.min.js' %}"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static 'voting/js/ie10-viewport-bug-workaround.js' %} "></script>
-  </body>
-</html>
+					<ul class="list-group">
+						<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #0</h4>
+							<p class="list-group-item-text">Sandwich Maker Fall 2015</p>
+						</a>
+						<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #1</h4>
+							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+						</a>
+						<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #2</h4>
+							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+						</a>
+						<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #3</h4>
+							<p class="list-group-item-text">President Fall 2016</p>
+						</a>
+						<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #4</h4>
+							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+						</a>
+						<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #5</h4>
+							<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+						</a>
+					</ul>				</div>
+			</div>
+		</div>
+	</div>
+</div> <!-- /container -->
+{% endblock %} <!-- Ending the content block -->
