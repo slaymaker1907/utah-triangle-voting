@@ -2,9 +2,9 @@
 {% load staticfiles %}
 {% block title %}Vote #1234{% endblock %}
 {% block content %}
+{% include "voting/navbar.html" %}
 <link rel="stylesheet" href="{% static 'voting/css/form.css' %}"></link>
 <div class="container theme-showcase" role="main">
-	{% include "voting/navbar.html" %}
 	<div>
 		<form class="form-horizontal" role="form" action="{% url "voting:index" %}" method="post">
 		{% csrf_token %}
