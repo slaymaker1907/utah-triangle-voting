@@ -1,10 +1,10 @@
 {% extends "voting/header.html" %}
-{% block title %}Vote #1234{% endblock %}
+{% block title %}Vote #{{vote.id}}{% endblock %}
 {% block content %}
 {% include "voting/navbar.html" %}
 <div class="container theme-showcase" role="main">
 	<div class="page-header">
-		<h1>Presidential Election Fall 2016</h1>
+		<h1>{{vote.name}}</h1>
 	</div>
 	
 	<div>
@@ -13,99 +13,33 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="username">Username:</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="username" placeholder="Enter username"></input>
+					<input type="text" class="form-control" id="username" placeholder="Enter username" name="username"></input>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="pwd">Password:</label>
 				<div class="col-sm-10"> 
-					<input type="password" class="form-control" id="pwd" placeholder="Enter password"></input>
+					<input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password"></input>
 				</div>
 			</div>
 			
+			{% for question in vote.questions %}
 			<hr></hr>
-			<h3>President</h3>
+			<h3>{{question.name}}</h3>
 			<hr></hr>
 			
+			{% for choice in question.choices %}
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="email">Santa Clause:</label>
+				<label class="control-label col-sm-2" for="email">{{choice.text}}:</label>
 				<div class="col-sm-10">
-					<label class="radio-inline"><input type="radio" name="optradio">1</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">2</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">3</input></label>
+					{% for _ in question.choices %}
+					<label class="radio-inline"><input type="radio" name="{{question.id}}:{{choice.id}}" value="{{forloop.counter}}">{{forloop.counter}}</input></label>
+					{% endfor %}
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Harry Potter:</label>
-				<div class="col-sm-10"> 
-					<label class="radio-inline"><input type="radio" name="optradio">1</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">2</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">3</input></label>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Gandalf:</label>
-				<div class="col-sm-10"> 
-					<label class="radio-inline"><input type="radio" name="optradio">1</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">2</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">3</input></label>
-				</div>
-			</div>
+			{% endfor %}
+			{% endfor %}
 			
-			<hr></hr>
-			<h3>Secretary</h3>
-			<hr></hr>
-			
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="email">Santa Clause:</label>
-				<div class="col-sm-10">
-					<label class="radio-inline"><input type="radio" name="optradio">1</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">2</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">3</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">4</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">5</input></label>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Harry Potter:</label>
-				<div class="col-sm-10"> 
-					<label class="radio-inline"><input type="radio" name="optradio">1</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">2</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">3</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">4</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">5</input></label>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Gandalf:</label>
-				<div class="col-sm-10"> 
-					<label class="radio-inline"><input type="radio" name="optradio">1</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">2</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">3</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">4</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">5</input></label>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Hermione:</label>
-				<div class="col-sm-10"> 
-					<label class="radio-inline"><input type="radio" name="optradio">1</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">2</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">3</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">4</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">5</input></label>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Pedro:</label>
-				<div class="col-sm-10"> 
-					<label class="radio-inline"><input type="radio" name="optradio">1</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">2</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">3</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">4</input></label>
-					<label class="radio-inline"><input type="radio" name="optradio">5</input></label>
-				</div>
-			</div>
 			<div class="form-group"> 
 				<div class="col-sm-offset-2 col-sm-10">
 					<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> Submit</button>
