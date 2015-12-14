@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from .models import *
 
 old_votes = [Vote("Best Politicians"), Vote("World Peace"), Vote("Best LoL Player"), Vote("Religous Freedom"), Vote("Strong Encryption"), Vote("Favorite Color")]
-current_votes = [Vote("President Fall 2016"), Vote("Sandwich Maker 2016"), Vote("Legislation 01/25/16")]
+current_votes = [Vote("President Fall 2016"), Vote("Sandwich Maker 2016", True), Vote("Legislation 01/25/16")]
 
 old_votes[0].questions = [Question("National"), Question("Local")]
 old_votes[0].questions[0].choices = [Choice("Barrack Obama"), Choice("Donald Trump"), Choice("Hilary Clinton")]
@@ -12,6 +12,10 @@ old_votes[0].questions[1].choices = [Choice("John Huntsman Jr."), Choice("Jim Ma
 current_votes[0].questions = [Question("President"), Question("Political Party")]
 current_votes[0].questions[0].choices = [Choice("Bernie Sanders"), Choice("Donald Trump"), Choice("Jeb Bush")]
 current_votes[0].questions[1].choices = [Choice("Democrat"), Choice("Republican"), Choice("Libertarian"), Choice("Independent")]
+
+current_votes[1].questions = [Question("President"), Question("Political Party")]
+current_votes[1].questions[0].choices = [Choice("Bernie Sanders"), Choice("Donald Trump"), Choice("Jeb Bush")]
+current_votes[1].questions[1].choices = [Choice("Democrat"), Choice("Republican"), Choice("Libertarian"), Choice("Independent")]
 
 def get_first(iter, pred):
 	for ele in iter:
