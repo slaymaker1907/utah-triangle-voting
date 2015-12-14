@@ -19,3 +19,6 @@ def results_page(request, vote_id):
 	
 def create_vote(request):
 	return render(request, 'voting/create_vote.html')
+	
+def history(request, page):
+	return render(request, 'voting/history.html')

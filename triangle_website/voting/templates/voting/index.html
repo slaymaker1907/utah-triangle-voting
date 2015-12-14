@@ -36,7 +36,7 @@
 		<div class="col-sm-6">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title">Completed Votes <button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-stats"></span> Full History</button></h3>
+					<h3 class="panel-title">Completed Votes <button type="button" class="btn btn-info btn-xs" onclick="window.location='{% url 'voting:history' 1 %}'; return false;"><span class="glyphicon glyphicon-stats"></span> Full History</button></h3>
 				</div>
 				<div class="panel-body">
 					<ul class="list-group">
