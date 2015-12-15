@@ -1,15 +1,34 @@
 from django.db import models
 
 # Not currently a full model with access to DB.
-class Vote:
+class Election:
 	__id__ = 0
 	def __init__(self, name="", is_poll=False):
 		self.name = name
-		self.id = Vote.__id__ + 1
-		Vote.__id__ += 1
+		self.id = Election.__id__ + 1
+		Election.__id__ += 1
 		self.questions = []
 		self.is_poll = is_poll
+		self.voted = set()
 		
+	def can_vote(self, user):
+		return user.id not in self.voted
+		
+class User:
+	__id__ = 0
+		
+class Voter:
+	__id__ = 0
+	def __init__(self, name=""):
+		self.id = Voter.__id__
+		Voter.__id__ += 1
+		self.name = name
+		
+class Vote:
+	__id__ = 0
+	def __init__(self, elecId, ):
+	
+	
 class Question:
 	__id__ = 0
 	def __init__(self, name=""):

@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
 
-old_votes = [Vote("Best Politicians"), Vote("World Peace"), Vote("Best LoL Player"), Vote("Religous Freedom"), Vote("Strong Encryption"), Vote("Favorite Color")]
-current_votes = [Vote("President Fall 2016"), Vote("Sandwich Maker 2016", True), Vote("Legislation 01/25/16")]
+old_votes = [Election("Best Politicians"), Election("World Peace"), Election("Best LoL Player"), Election("Religous Freedom"), Election("Strong Encryption"),
+ Election("Favorite Color")]
+current_votes = [Election("President Fall 2016"), Election("Sandwich Maker 2016", True), Election("Legislation 01/25/16")]
 
 old_votes[0].questions = [Question("National"), Question("Local")]
 old_votes[0].questions[0].choices = [Choice("Barrack Obama"), Choice("Donald Trump"), Choice("Hilary Clinton")]
