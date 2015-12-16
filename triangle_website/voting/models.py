@@ -22,7 +22,7 @@ class Question(models.Model):
 	election = models.ForeignKey(Election, on_delete=models.CASCADE)
 		
 class Choice(models.Model):
-	name = models.CharField(max_length=255)
+	text = models.CharField(max_length=255)
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
 class Vote(models.Model):

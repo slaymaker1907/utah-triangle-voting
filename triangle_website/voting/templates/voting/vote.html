@@ -23,16 +23,16 @@
 				</div>
 			</div>
 			
-			{% for question in vote.questions %}
+			{% for question in vote.question_set.all %}
 			<hr></hr>
 			<h3>{{question.name}}</h3>
 			<hr></hr>
 			
-			{% for choice in question.choices %}
+			{% for choice in question.choice_set.all %}
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="email">{{choice.text}}:</label>
 				<div class="col-sm-10">
-					{% for _ in question.choices %}
+					{% for _ in question.choice_set.all %}
 					<label class="radio-inline"><input type="radio" name="{{question.id}}:{{choice.id}}" value="{{forloop.counter}}">{{forloop.counter}}</input></label>
 					{% endfor %}
 				</div>

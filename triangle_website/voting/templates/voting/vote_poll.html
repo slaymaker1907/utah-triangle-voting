@@ -25,13 +25,13 @@
 				</div>
 			</div>
 			
-			{% for question in vote.questions %}
+			{% for question in vote.question_set.all %}
 			<hr></hr>
 			<h3>{{question.name}}</h3>
 			<hr></hr>
 			
 			<div class="form-group">
-				{% for choice in question.choices %}
+				{% for choice in question.choice_set.all %}
 				<div class="radio col-sm-offset-2 col-sm-10">
 					<label><input type="radio" name="{{question.id}}" value="{{choice.id}}">{{choice.text}}</input></label>
 				</div>

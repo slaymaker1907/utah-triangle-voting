@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import *
 from django.core.urlresolvers import reverse
@@ -12,8 +12,10 @@ def voting_index(request):
 	return render(request, 'voting/index.html', context)
 	
 def vote_page(request, vote_id):
-	id = int(vote_id)
-	vote = get_first(current_votes, lambda vt: vt.id == id)
+	vote = get_object_or_404(Election, pk=vote_id)
+	for ques in vote.question_set.all():
+		for choice in ques.choice_set.all():
+			print(choice.text)
 	if vote.is_poll:
 		temp = 'voting/vote_poll.html'
 	else:
@@ -31,6 +33,10 @@ def new_vote(request):
 	
 def history(request, page):
 	return render(request, 'voting/history.html')
+
+def delete_votes():
+	for elec in Election.objects.all():
+		elec.delete()
 	
 def create_vote(request):
 	new_vote = Election()
@@ -51,7 +57,7 @@ def create_vote(request):
 				choiceId = quesId + 'c' + str(choiceCount)
 				if choiceId in request.POST:
 					newChoice = Choice()
-					newChoice.name = request.POST[choiceId]
+					newChoice.text = request.POST[choiceId]
 					newChoice.question = newQues
 					newChoice.save()
 				else:
