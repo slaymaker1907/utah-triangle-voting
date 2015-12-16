@@ -15,10 +15,10 @@
 					<input type="text" class="form-control input-lg" id="vote_name" placeholder="Enter name of vote"></input>
 				</div>
 				<div class="col-sm-2">
-					<button type="button" class="btn btn-default btn-circle btn-lg">
+					<button type="button" class="btn btn-default btn-circle btn-lg" ng-click="questions.push(getQuestion())">
 						<span class="glyphicon glyphicon-plus"></span>
 					</button>
-					<button type="button" class="btn btn-default btn-circle btn-lg">
+					<button type="button" class="btn btn-default btn-circle btn-lg" ng-click="questions.pop()">
 						<span class="glyphicon glyphicon-minus"></span>
 					</button>
 				</div>
@@ -73,23 +73,23 @@
 			</div>
 			
 			{% verbatim %}
-			<span ng-repeat="question in questions">
+			<span ng-repeat="question in questions track by $index">
 				<hr></hr>
 				<div class="form-group">
 					<label class="control-label col-sm-2" for="question">Question {{$index + 1}}:</label>
 					<div class="col-sm-8">
 						<input type="text" class="form-control" id="text" placeholder="Enter a question"></input>
 					</div>
-					<div class="col-sm-2" ng-if="$first">
-						<button type="button" class="btn btn-default btn-circle">
+					<div class="col-sm-2">
+						<button type="button" class="btn btn-default btn-circle" ng-click="question.choices.push('')">
 							<span class="glyphicon glyphicon-plus"></span>
 						</button>
-						<button type="button" class="btn btn-default btn-circle">
+						<button type="button" class="btn btn-default btn-circle" ng-click="question.choices.pop()">
 							<span class="glyphicon glyphicon-minus"></span>
 						</button>
 					</div>
 				</div>
-				<div class="form-group" ng-repeat="option in question.choices">
+				<div class="form-group" ng-repeat="option in question.choices track by $index">
 					<label class="control-label col-sm-2 input-sm" for="email">Option {{$index + 1}}:</label>
 					<div class="col-sm-8">
 						<input type="text" class="form-control input-sm" id="text" placeholder="Enter an option"></input>
