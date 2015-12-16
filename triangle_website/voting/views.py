@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from .models import *
+from django.core.urlresolvers import reverse
 
 # Create your views here.
 def voting_index(request):
@@ -19,16 +20,19 @@ def vote_page(request, vote_id):
 	return render(request, temp, {"vote":vote})
 				
 def results_page(request, vote_id):
-	if request.method == "POST":
-		for param in request.POST:
-			print(param + ":" + request.POST[param])
 	if vote_id == "0":
 		return render(request, 'voting/results.html')
 	else:
 		return render(request, 'voting/results_poll.html')
 	
-def create_vote(request):
-	return render(request, 'voting/create_vote.html')
+def new_vote(request):
+	return render(request, 'voting/new_vote.html')
 	
 def history(request, page):
 	return render(request, 'voting/history.html')
+	
+def create_vote(request):
+	if request.method == "POST":
+		for param in request.POST:
+			print(param + ":" + request.POST[param])
+	return HttpResponseRedirect(reverse('voting:index'))

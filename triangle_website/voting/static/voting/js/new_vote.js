@@ -10,8 +10,8 @@ function getQuestion() {
 
 var formApp = angular.module("formApp", []);
 formApp.controller("mainControl", function($scope){
-	$scope.questions = [new Question(), new Question, new Question()];
-	
+	$scope.questions = [new Question()];
+	$scope.useCode = true;
 	// This is a hacky thing since angular does not allow use of the new operator in expressions but does allow function calls.
 	// Also, this function must be here so that Angular will register the new object.
 	$scope.getQuestion = function() {
