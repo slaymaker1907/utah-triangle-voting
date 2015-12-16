@@ -2,31 +2,11 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
 
-old_votes = [Election("Best Politicians"), Election("World Peace"), Election("Best LoL Player"), Election("Religous Freedom"), Election("Strong Encryption"),
- Election("Favorite Color")]
-current_votes = [Election("President Fall 2016"), Election("Sandwich Maker 2016", True), Election("Legislation 01/25/16")]
-
-old_votes[0].questions = [Question("National"), Question("Local")]
-old_votes[0].questions[0].choices = [Choice("Barrack Obama"), Choice("Donald Trump"), Choice("Hilary Clinton")]
-old_votes[0].questions[1].choices = [Choice("John Huntsman Jr."), Choice("Jim Matheson"), Choice("Gary Herbert"), Choice("Bob Bennet")]
-
-current_votes[0].questions = [Question("President"), Question("Political Party")]
-current_votes[0].questions[0].choices = [Choice("Bernie Sanders"), Choice("Donald Trump"), Choice("Jeb Bush")]
-current_votes[0].questions[1].choices = [Choice("Democrat"), Choice("Republican"), Choice("Libertarian"), Choice("Independent")]
-
-current_votes[1].questions = [Question("President"), Question("Political Party")]
-current_votes[1].questions[0].choices = [Choice("Bernie Sanders"), Choice("Donald Trump"), Choice("Jeb Bush")]
-current_votes[1].questions[1].choices = [Choice("Democrat"), Choice("Republican"), Choice("Libertarian"), Choice("Independent")]
-
-def get_first(iter, pred):
-	for ele in iter:
-		if pred(ele):
-			return ele
-	return None
-
 # Create your views here.
 def voting_index(request):
-	context = {"current_votes": current_votes, "complete_votes":old_votes[:5]}
+	current_votes = Election.objects.filter(is_open=True)
+	old_votes = Election.objects.filter(is_open=False).order_by('-id')[:5]
+	context = {"current_votes": current_votes, "complete_votes":old_votes}
 	return render(request, 'voting/index.html', context)
 	
 def vote_page(request, vote_id):

@@ -1,45 +1,31 @@
 from django.db import models
+from django.contrib.auth.models import User
+import itertools
 
 # Not currently a full model with access to DB.
-class Election:
-	__id__ = 0
-	def __init__(self, name="", is_poll=False):
-		self.name = name
-		self.id = Election.__id__ + 1
-		Election.__id__ += 1
-		self.questions = []
-		self.is_poll = is_poll
-		self.voted = set()
+class Election(models.Model):
+	name = models.CharField(max_length=255)
+	is_poll = models.BooleanField()
+	is_open = models.BooleanField(default=True)
+	def can_vote(self, user_ob):
+		return len(Voter.objects.filter(user=user_ob).filter(election=self)) == 0
 		
-	def can_vote(self, user):
-		return user.id not in self.voted
-		
-class User:
-	__id__ = 0
-		
-class Voter:
-	__id__ = 0
-	def __init__(self, name=""):
-		self.id = Voter.__id__
-		Voter.__id__ += 1
-		self.name = name
-		
-class Vote:
-	__id__ = 0
-	def __init__(self, elecId, ):
+class Voter(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	election = models.ForeignKey(Election, on_delete=models.CASCADE)
 	
-	
-class Question:
-	__id__ = 0
-	def __init__(self, name=""):
-		self.name = name
-		self.choices = []
-		self.id = Question.__id__
-		Question.__id__ += 1
+	class Meta:
+		unique_together = ('user', 'election')
 		
-class Choice:
-	__id__ = 0
-	def __init__(self, text):
-		self.text = text
-		self.id = Choice.__id__
-		Choice.__id__ += 1
+class Question(models.Model):
+	name = models.CharField(max_length=255)
+	election = models.ForeignKey(Election, on_delete=models.CASCADE)
+		
+class Choice(models.Model):
+	name = models.CharField(max_length=255)
+	question = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+class Vote(models.Model):
+	# Can get back to question through the choice field.
+	choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+	rank = models.IntegerField()

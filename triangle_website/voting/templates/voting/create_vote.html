@@ -4,7 +4,8 @@
 {% block content %}
 {% include "voting/navbar.html" %}
 <link rel="stylesheet" href="{% static 'voting/css/form.css' %}"></link>
-<div class="container theme-showcase" role="main">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.0/angular.min.js"></script>
+<div class="container theme-showcase" role="main" ng-app="formApp" ng-controller="mainControl">
 	<div>
 		<form class="form-horizontal" role="form" action="{% url "voting:index" %}" method="post">
 		{% csrf_token %}
@@ -71,64 +72,33 @@
 				</div>
 			</div>
 			
-			<hr></hr>
-
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="email">Question 1:</label>
-				<div class="col-sm-8">
-					<input type="text" class="form-control" id="text" placeholder="Enter a question"></input>
+			{% verbatim %}
+			<span ng-repeat="question in questions">
+				<hr></hr>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="question">Question {{$index + 1}}:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" id="text" placeholder="Enter a question"></input>
+					</div>
+					<div class="col-sm-2" ng-if="$first">
+						<button type="button" class="btn btn-default btn-circle">
+							<span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<button type="button" class="btn btn-default btn-circle">
+							<span class="glyphicon glyphicon-minus"></span>
+						</button>
+					</div>
 				</div>
-				<div class="col-sm-2">
-					<button type="button" class="btn btn-default btn-circle">
-						<span class="glyphicon glyphicon-plus"></span>
-					</button>
-					<button type="button" class="btn btn-default btn-circle">
-						<span class="glyphicon glyphicon-minus"></span>
-					</button>
+				<div class="form-group" ng-repeat="option in question.choices">
+					<label class="control-label col-sm-2 input-sm" for="email">Option {{$index + 1}}:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control input-sm" id="text" placeholder="Enter an option"></input>
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2 input-sm" for="email">Option 1:</label>
-				<div class="col-sm-8">
-					<input type="text" class="form-control input-sm" id="text" placeholder="Enter an option"></input>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2 input-sm" for="email">Option 2:</label>
-				<div class="col-sm-8">
-					<input type="text" class="form-control input-sm" id="text" placeholder="Enter an option"></input>
-				</div>
-			</div>
-
-			<hr></hr>
-
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="email">Question 2:</label>
-				<div class="col-sm-8">
-					<input type="text" class="form-control" id="text" placeholder="Enter a question"></input>
-				</div>
-				<div class="col-sm-2">
-					<button type="button" class="btn btn-default btn-circle">
-						<span class="glyphicon glyphicon-plus"></span>
-					</button>
-					<button type="button" class="btn btn-default btn-circle">
-						<span class="glyphicon glyphicon-minus"></span>
-					</button>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2 input-sm" for="email">Option 1:</label>
-				<div class="col-sm-8">
-					<input type="text" class="form-control input-sm" id="text" placeholder="Enter an option"></input>
-				</div>
-			</div>
-
-			<div class="form-group"> 
-				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Create</button>
-				</div>
-			</div>
+			</span>
+			{% endverbatim %}
 		</form>
 	</div>
 </div> <!-- /container -->
+<script src="{% static 'voting/js/new_vote.js' %}"></script>
 {% endblock %} <!--{1}** Ending the content block **{1}>
