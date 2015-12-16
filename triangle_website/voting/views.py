@@ -40,28 +40,29 @@ def delete_votes():
 	
 def create_vote(request):
 	new_vote = Election()
-	if request.method == "POST":
-		for param in request.POST:
-			print(param + ":" + request.POST[param])
 	new_vote.is_poll = request.POST["voteType"] == "poll"
 	new_vote.name = request.POST["voteName"]
 	new_vote.save()
-	for quesCount in itertools.count(1):
-		quesId = 'q' + str(quesCount)
-		if quesId in request.POST:
-			newQues = Question()
-			newQues.name = request.POST[quesId]
-			newQues.election = new_vote
-			newQues.save()
-			for choiceCount in itertools.count(1):
-				choiceId = quesId + 'c' + str(choiceCount)
-				if choiceId in request.POST:
-					newChoice = Choice()
-					newChoice.text = request.POST[choiceId]
-					newChoice.question = newQues
-					newChoice.save()
-				else:
-					break
-		else:
-			break
+	try:
+		for quesCount in itertools.count(1):
+			quesId = 'q' + str(quesCount)
+			if quesId in request.POST:
+				newQues = Question()
+				newQues.name = request.POST[quesId]
+				newQues.election = new_vote
+				newQues.save()
+				for choiceCount in itertools.count(1):
+					choiceId = quesId + 'c' + str(choiceCount)
+					if choiceId in request.POST:
+						newChoice = Choice()
+						newChoice.text = request.POST[choiceId]
+						newChoice.question = newQues
+						newChoice.save()
+					else:
+						break
+			else:
+				break
+	except:
+		new_vote.delete()
+		raise
 	return HttpResponseRedirect(reverse('voting:index'))
