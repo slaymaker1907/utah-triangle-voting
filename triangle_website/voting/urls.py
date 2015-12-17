@@ -8,5 +8,6 @@ urlpatterns = [
 	url(r'^results/(\d+)$', results_page, name='results'),
 	url(r'^new/$', new_vote, name='new'),
 	url(r'^history/(\d+)$', history, name='history'),
-	url(r'^create/$', create_vote, name='create')
+	url(r'^create/$', create_vote, name='create'),
+	url(r'^submit/(\d+)$', submit_vote, name='submit')
 ]

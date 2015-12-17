@@ -20,7 +20,7 @@
 		<thead>
 			<tr>
 				{% for choice in question.choice_set.all %}
-				<th>{{choice.name}}</th>
+				<th>{{choice.text}}</th>
 				{% endfor %}
 			</tr>
 		</thead>

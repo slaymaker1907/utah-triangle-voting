@@ -13,9 +13,6 @@ def voting_index(request):
 	
 def vote_page(request, vote_id):
 	vote = get_object_or_404(Election, pk=vote_id)
-	for ques in vote.question_set.all():
-		for choice in ques.choice_set.all():
-			print(choice.text)
 	if vote.is_poll:
 		temp = 'voting/vote_poll.html'
 	else:
@@ -23,36 +20,44 @@ def vote_page(request, vote_id):
 	return render(request, temp, {"vote":vote})
 	
 def submit_vote(request, vote_id):
-	# Should never happen.
-	vote = Election.objects.get(pk=vote_id)
-	# TODO Make sure users can't vote twice
-	if (vote.is_poll):
-		for question in vote.question_set.all():
-			id = str(question.id)
-			if id in request.POST:
-				selected = int(request.POST[str(question.id)])
-				new_vote = Vote()
-				new_vote.choice = Choice.objects.get(pk=selected)
-				new_vote.rank = 1
-				new_vote.save()
-	else: # Vote is alternative vote.
-		for question in vote.question_set.all():
-			for choice in question.choice_set.all():
-				opt = str(question.id) + ':' + str(choice.id)
-				if opt in request.POST:
-					# TODO Verify vote data.
-					rank = int(request.POST[opt])
-					new_vote = Vote()
-					new_vote.choice = choice
-					new_vote.rank = rank
+	# Should never fail except for very strange circumstances
+	modified = []
+	try:
+		vote = Election.objects.get(pk=vote_id)
+		voter = AnonVoter(election=vote)
+		voter.save()
+		modified.append(voter)
+		# TODO Make sure users can't vote twice
+		if (vote.is_poll):
+			for question in vote.question_set.all():
+				id = str(question.id)
+				if id in request.POST:
+					selected = int(request.POST[str(question.id)])
+					new_vote = Vote(choice=Choice.objects.get(pk=selected), rank=1, voter=voter)
 					new_vote.save()
+					modified.append(new_vote)
+		else: # Vote is alternative vote.
+			for question in vote.question_set.all():
+				for choice in question.choice_set.all():
+					opt = str(question.id) + ':' + str(choice.id)
+					if opt in request.POST:
+						# TODO Verify vote data.
+						new_vote = Vote(rank=int(request.POST[opt]), choice=choice, voter=voter)
+						new_vote.save()
+						modified.append(new_vote)
+	except:
+		for data in modified:
+			data.delete()
+		raise
 	return HttpResponseRedirect(reverse('voting:results', args=[str(vote.id)]))
 					
 def results_page(request, vote_id):
-	if vote_id == "0":
-		return render(request, 'voting/results.html')
+	vote = get_object_or_404(Election, pk=vote_id)
+	if vote.is_poll:
+		temp = 'voting/results_poll.html'
 	else:
-		return render(request, 'voting/results_poll.html')
+		temp = 'voting/results.html'
+	return render(request, temp, {'election':vote})
 
 def new_vote(request):
 	return render(request, 'voting/new_vote.html')

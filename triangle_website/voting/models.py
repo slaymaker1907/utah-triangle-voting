@@ -25,7 +25,7 @@ class Question(models.Model):
 	
 	def votes(self):
 		result = []
-		for voter in self.election.anonvoter_set:
+		for voter in self.election.anonvoter_set.all():
 			result.append(voter.get_vote(self))
 		return result
 
