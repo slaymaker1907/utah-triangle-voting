@@ -1,12 +1,15 @@
 {% extends "voting/header.html" %}
-{% block title %}Votes #1234 Results{% endblock %}
+{% block title %}Votes #{{election.id}} Results{% endblock %}
 {% block content %}
 {% include "voting/navbar.html" %}
+{% load voting_tags %}
 <div class="container theme-showcase" role="main">
 	
-	<h1>Vote #1234 Results</h1>
+	<h1>{{election.name}} Results</h1>
 	
-	<h3>President</h3>
+	{% for question in election.question_set.all %}
+	<hr></hr>
+	<h3>{{question.name}}</h3>
 	<hr></hr>
 	
 	<div class="alert alert-success">
@@ -16,72 +19,22 @@
 	<table class="table table-condensed">
 		<thead>
 			<tr>
-				<th>Santa Clause</th>
-				<th>Harry Potter</th>
-				<th>Gandalf</th>
+				{% for choice in question.choice_set.all %}
+				<th>{{choice.name}}</th>
+				{% endfor %}
 			</tr>
 		</thead>
 		<tbody>
+			{% for vote in question.votes %}
 			<tr>
-				<td>1</td>
-				<td>2</td>
-				<td>3</td>
+				{% for choice in question.choice_set.all %}
+				<td>{{vote|dict_get:choice.id|default:""}}</td>
+				{% endfor %}
 			</tr>
-			<tr>
-				<td>3</td>
-				<td>1</td>
-				<td>2</td>
-			</tr>
-			<tr>
-				<td>1</td>
-				<td></td>
-				<td>2</td>
-			</tr>
+			{% endfor %}
 		</tbody>
 	</table>
-	
-	<hr></hr>
-	<h3>Secretary</h3>
-	<hr></hr>
-	
-	<div class="alert alert-success">
-		<strong>Ranking:</strong> Harry Potter; Santa Clause; and tie between Gandalf, Hermione, and Pedro.</strong>
-	</div>
-	
-	<table class="table table-condensed">
-		<thead>
-			<tr>
-				<th>Santa Clause</th>
-				<th>Harry Potter</th>
-				<th>Gandalf</th>
-				<th>Hermione</th>
-				<th>Pedro</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>1</td>
-				<td>2</td>
-				<td>3</td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>1</td>
-				<td></td>
-				<td>4</td>
-				<td>3</td>
-			</tr>
-			<tr>
-				<td>3</td>
-				<td>1</td>
-				<td>5</td>
-				<td>2</td>
-				<td>4</td>
-			</tr>
-		</tbody>
-	</table>
+	{% endfor %}
 	
 </div> <!-- /container -->
 {% endblock %} <!-- Ending the content block -->

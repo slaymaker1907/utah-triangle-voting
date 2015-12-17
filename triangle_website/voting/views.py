@@ -21,7 +21,33 @@ def vote_page(request, vote_id):
 	else:
 		temp = 'voting/vote.html'
 	return render(request, temp, {"vote":vote})
-				
+	
+def submit_vote(request, vote_id):
+	# Should never happen.
+	vote = Election.objects.get(pk=vote_id)
+	# TODO Make sure users can't vote twice
+	if (vote.is_poll):
+		for question in vote.question_set.all():
+			id = str(question.id)
+			if id in request.POST:
+				selected = int(request.POST[str(question.id)])
+				new_vote = Vote()
+				new_vote.choice = Choice.objects.get(pk=selected)
+				new_vote.rank = 1
+				new_vote.save()
+	else: # Vote is alternative vote.
+		for question in vote.question_set.all():
+			for choice in question.choice_set.all():
+				opt = str(question.id) + ':' + str(choice.id)
+				if opt in request.POST:
+					# TODO Verify vote data.
+					rank = int(request.POST[opt])
+					new_vote = Vote()
+					new_vote.choice = choice
+					new_vote.rank = rank
+					new_vote.save()
+	return HttpResponseRedirect(reverse('voting:results', args=[str(vote.id)]))
+					
 def results_page(request, vote_id):
 	if vote_id == "0":
 		return render(request, 'voting/results.html')
