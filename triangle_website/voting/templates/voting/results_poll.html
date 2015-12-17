@@ -1,51 +1,14 @@
 {% extends "voting/header.html" %}
-{% block title %}Votes #1234 Results{% endblock %}
+{% block title %}Votes #{{election.id}} Results{% endblock %}
 {% block content %}
 {% load staticfiles %}
 {% include "voting/navbar.html" %}
 <div class="container theme-showcase" role="main">	
-	<h1>Formal Poll</h1>
+	<h1>{{election.name}}</h1>
 	
+	{% for question in election.question_set.all %}
 	<hr></hr>
-	<h3>Places for Formal</h3>
-	<hr></hr>
-	
-	<div class="row">
-		<div class="col-sm-4">
-			<div class="panel panel-success">
-				<div class="panel-heading">
-					<h3 class="panel-title">Results</h3>
-				</div>
-				<ul class="list-group">
-					<li class="list-group-item">
-						<h4 class="list-group-item-heading">Zion</h4>
-						<p class="list-group-item-text">7 Votes</p>
-					</li>
-					<li class="list-group-item">
-						<h4 class="list-group-item-heading">Bryce Canyon</h4>
-						<p class="list-group-item-text">10 Votes</p>
-					</li>
-					<li class="list-group-item">
-						<h4 class="list-group-item-heading">Grand Junction</h4>
-						<p class="list-group-item-text">3 Votes</p>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<div class="col-sm-8">
-			<div class="panel panel-info">
-				<div class="panel-heading">
-					<h3 class="panel-title">Graphical Data</h3>
-				</div>
-				<div>
-					<canvas id="chart1"></canvas>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<hr></hr>
-	<h3>Should Triangle Have Formal Shirts?</h3>
+	<h3>{{question.name}}</h3>
 	<hr></hr>
 	
 	<div class="row">
@@ -55,14 +18,12 @@
 					<h3 class="panel-title">Results</h3>
 				</div>
 				<ul class="list-group">
+					{% for choice in question.choice_set.all %}
 					<li class="list-group-item">
-						<h4 class="list-group-item-heading">Yes</h4>
-						<p class="list-group-item-text">17 Votes</p>
+						<h4 class="list-group-item-heading">{{choice.text}}</h4>
+						<p class="list-group-item-text">{{choice.sum_rank}} Votes</p>
 					</li>
-					<li class="list-group-item">
-						<h4 class="list-group-item-heading">No</h4>
-						<p class="list-group-item-text">3 Votes</p>
-					</li>
+					{% endfor %}
 				</ul>
 			</div>
 		</div>
@@ -72,11 +33,12 @@
 					<h3 class="panel-title">Graphical Data</h3>
 				</div>
 				<div>
-					<canvas id="chart2"></canvas>
+					<canvas id="chart{{question.id}}"></canvas>
 				</div>
 			</div>
 		</div>
 	</div>
+	{% endfor %}
 	
 </div> <!-- /container -->
 <script src="{% static 'voting/js/chart.min.js' %}"></script>

@@ -32,6 +32,15 @@ class Question(models.Model):
 class Choice(models.Model):
 	text = models.CharField(max_length=255)
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
+	
+	# This is a convenience method for a poll to figure out how many voted for something.
+	def sum_rank(self):
+		# aggregate is kind of strange and returns a dictionary instead of the value itself.
+		result = Vote.objects.filter(choice=self).aggregate(models.Sum('rank'))['rank__sum']
+		if result:
+			return result
+		else:
+			return 0
 
 # This is to collect votes for the Vote class. It stores a question mostly for convenience.
 class AnonVoter(models.Model):
