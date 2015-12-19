@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User
 import itertools
 
@@ -23,6 +23,15 @@ class Election(models.Model):
 	def check_passcode(self, get_passcode):
 		code = self.get_passcode()
 		return not (code != None and code.code != get_passcode())
+	
+	# Sets and returns the passcode.
+	@transaction.atomic
+	def set_passcode(self, passcode):
+		result, was_created = Passcode.objects.get_or_create(election=self)
+		result.code = passcode
+		result.full_clean()
+		result.save()
+		return result
 		
 class Passcode(models.Model):
 	code = models.CharField(max_length=255)
