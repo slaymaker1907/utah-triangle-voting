@@ -32,6 +32,13 @@ class Election(models.Model):
 		result.full_clean()
 		result.save()
 		return result
+	
+	# Sets that a particular user voted in this election. Returns None on failure.
+	def set_voted(self, user):
+		try:
+			return Voter.objects.create(user=user, election=self)
+		except:
+			return None
 		
 class Passcode(models.Model):
 	code = models.CharField(max_length=255)
@@ -86,7 +93,11 @@ class Vote(models.Model):
 	rank = models.IntegerField()
 	# This is anonymous and can not be traced back to a user.
 	voter = models.ForeignKey(AnonVoter, on_delete=models.CASCADE)
-	
+
 class InvPasscode(Exception):
+	def __init__(self, message=''):
+		self.message = message
+		
+class VotingError(Exception):
 	def __init__(self, message=''):
 		self.message = message

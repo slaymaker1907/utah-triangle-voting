@@ -4,6 +4,7 @@ from .models import *
 from django.core.urlresolvers import reverse
 import itertools
 from django.db import transaction
+from django.contrib.auth import authenticate
 
 # Create your views here.
 def voting_index(request):
@@ -28,8 +29,16 @@ def submit_vote(request, vote_id):
 	# Check passcode
 	if not vote.check_passcode(lambda: request.POST['passcode']):
 		raise InvPasscode()
+		
+	user = authenticate(username=request.POST['username'], password=request.POST['password'])
 	
-	# TODO Make sure users can't vote twice
+	if not user:
+		raise VotingError('Error, incorrect username/password.')
+	
+	# Make sure you can't vote twice.
+	if not vote.set_voted(user):
+		raise VotingError('Error, ' + user.username + ' has already voted in ' + vote.name)
+	
 	save_vote(request, vote)
 	return HttpResponseRedirect(reverse('voting:results', args=[str(vote.id)]))
 	
