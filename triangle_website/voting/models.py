@@ -89,12 +89,17 @@ class Question(models.Model):
 		if self.election.is_poll:
 			raise Exception('Can not get results for a poll from get_results.')
 				
-		votes = defaultdict(set)
+		votes = dict()
+		choices = set(self.choice_set.all())
+		for choice in choices:
+			votes[choice] = set()
 		excluded = set(exclusion)
-		def add_vote(voter, dropped_choice=None):
-			if dropped_choice:
-				votes.pop(dropped_choice, None)
-				excluded.add(dropped_choice)
+		def remove_votes(choice):
+			excluded.add(choice)
+			result = votes[choice]
+			votes.pop(choice, {})
+			return result
+		def add_vote(voter):
 			choice = voter.get_first_choice(self, excluded)
 			# Have to check and see if there is another voter to add in.
 			if choice:
@@ -104,15 +109,16 @@ class Question(models.Model):
 			add_vote(voter)
 		
 		# Initialize winner just in case there are no voters yet.
-		winner = set(set(self.choice_set.all()) - exclusion)
+		winner = set(choices - exclusion)
 		while len(votes) > 0:
 			lowest_votes = min(map(len, votes.values()))
 			
 			# The last one to go will indeed be the winner.
 			winner = {choice for choice, voters in votes.items() if len(voters) == lowest_votes}
 			for to_drop in winner:
-				for voter in list(votes[to_drop]):
-					add_vote(voter, dropped_choice=to_drop)
+				voters = remove_votes(to_drop)
+				for voter in voters:
+					add_vote(voter)
 		
 		# Exclude the winner set as well as the ones already excluded.
 		#[print(choice.text) for choice in winner]
