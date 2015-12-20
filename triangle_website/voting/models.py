@@ -84,6 +84,7 @@ class Question(models.Model):
 				votes.pop(dropped_choice, None)
 				excluded.add(dropped_choice)
 			choice = voter.get_first_choice(self, excluded)
+			# Have to check and see if there is another voter to add in.
 			if choice:
 				votes[choice].add(voter)
 
