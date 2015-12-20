@@ -63,14 +63,35 @@ def save_vote(request, elec):
 					# TODO Verify vote data.
 					new_vote = Vote(rank=int(request.POST[opt]), choice=choice, voter=voter)
 					new_vote.save()
-					
+
 def results_page(request, vote_id):
 	vote = get_object_or_404(Election, pk=vote_id)
+	context = {'election':vote}
 	if vote.is_poll:
 		temp = 'voting/results_poll.html'
 	else:
-		temp = 'voting/results.html'
-	return render(request, temp, {'election':vote})
+		temp = 'voting/results.html'		
+		context['winner_strs'] = {question: get_winner_str(question) for question in vote.question_set.all()}
+	return render(request, temp, context)
+
+# Constructs a string of the form one; tie second, third
+def get_winner_str(question):
+	winner_str = ''
+	first1 = True
+	for winner_set in question.get_results():
+		if len(winner_set) > 1:
+			winner_str += 'tie '
+		first2 = True
+		for winner in winner_set:
+			if first2:
+				winner_str += winner.text
+				first2 = False
+			else:
+				winner_str += ', ' + winner.text
+		if first1:
+			first1 = False
+		else:
+			winner_str += '; '
 
 def new_vote(request):
 	return render(request, 'voting/new_vote.html')

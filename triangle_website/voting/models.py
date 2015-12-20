@@ -83,7 +83,7 @@ class Question(models.Model):
 				votes.pop(dropped_choice, None)
 			choice = voter.get_first_choice(self, dropped_choice)
 			if choice:
-				votes.get(choice, default=[]).append(voter)
+				votes.get(choice, []).append(voter)
 				
 		def majority():
 			voter_count = len([voter for sublist in votes.values() for voter in sublist])
@@ -127,7 +127,7 @@ class Choice(models.Model):
 class AnonVoter(models.Model):
 	election = models.ForeignKey(Election, on_delete=models.CASCADE)
 	
-	# This gets the rank for this user for a particular choice.
+	# This gets the rank for this user for a particular choice. To get the rank, call result[choice.id].
 	def get_vote(self, question_arg):
 		result = dict()
 		# Double underscore is to make python happy and is pretty much like choice.question.
@@ -138,7 +138,7 @@ class AnonVoter(models.Model):
 			
 	# If dropped_choice=None, returns the vote with the highest rank. If dropped_choice != None, returns the next highest preference.
 	def get_first_choice(self, question, dropped_choice=None):
-		result = Vote.objects.filter(choice__question=question_arg).filter(voter=self)
+		result = Vote.objects.filter(choice__question=question).filter(voter=self)
 		if dropped_choice:
 			result = result.filter(rank__gt=dropped_choice.rank)
 		if len(result) == 0:
