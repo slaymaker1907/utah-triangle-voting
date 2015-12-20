@@ -78,7 +78,7 @@ def results_page(request, vote_id):
 def get_winner_str(question):
 	winner_str = ''
 	first1 = True
-	print(len(question.get_results()[0]))
+	voters = question.get_voters()
 	for winner_set in question.get_results():
 		if len(winner_set) > 1:
 			winner_str += 'tie '
