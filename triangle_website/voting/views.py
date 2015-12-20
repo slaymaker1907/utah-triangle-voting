@@ -29,26 +29,31 @@ def submit_vote(request, vote_id):
 	if not vote.check_passcode(lambda: request.POST['passcode']):
 		raise InvPasscode()
 	
-	voter = AnonVoter(election=vote)
+	# TODO Make sure users can't vote twice
+	save_vote(request, vote)
+	return HttpResponseRedirect(reverse('voting:results', args=[str(vote.id)]))
+	
+# This is just a helper method, not an actual view.
+@transaction.atomic
+def save_vote(request, elec):
+	voter = AnonVoter(election=elec)
 	voter.save()
 	
-	# TODO Make sure users can't vote twice
-	if (vote.is_poll):
-		for question in vote.question_set.all():
+	if (elec.is_poll):
+		for question in elec.question_set.all():
 			id = str(question.id)
 			if id in request.POST:
 				selected = int(request.POST[str(question.id)])
 				new_vote = Vote(choice=Choice.objects.get(pk=selected), rank=1, voter=voter)
 				new_vote.save()
 	else: # Vote is alternative vote.
-		for question in vote.question_set.all():
+		for question in elec.question_set.all():
 			for choice in question.choice_set.all():
 				opt = str(question.id) + ':' + str(choice.id)
 				if opt in request.POST:
 					# TODO Verify vote data.
 					new_vote = Vote(rank=int(request.POST[opt]), choice=choice, voter=voter)
 					new_vote.save()
-	return HttpResponseRedirect(reverse('voting:results', args=[str(vote.id)]))
 					
 def results_page(request, vote_id):
 	vote = get_object_or_404(Election, pk=vote_id)
@@ -75,8 +80,7 @@ def create_vote(request):
 	new_vote.name = request.POST["voteName"]
 	new_vote.save()
 	if request.POST['useCode']:
-		passcode = Passcode(code=request.POST['passcode'], election=new_vote)
-		passcode.save()
+		new_vote.set_passcode(request.POST['passcode'])
 	for quesCount in itertools.count(1):
 		quesId = 'q' + str(quesCount)
 		if quesId in request.POST:
