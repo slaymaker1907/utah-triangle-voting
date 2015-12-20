@@ -2,6 +2,7 @@ from django.db import models, transaction
 from django.contrib.auth.models import User
 import itertools
 from math import ceil
+from collections import defaultdict
 
 
 # Not currently a full model with access to DB.
@@ -76,14 +77,15 @@ class Question(models.Model):
 		if self.election.is_poll:
 			raise Exception('Can not get results for a poll from get_results.')
 				
-		votes = dict()
+		votes = defaultdict(set)
+		excluded = set(exclusion)
 		def add_vote(voter, dropped_choice=None):
 			if dropped_choice:
-				# Second arg ensures that no exception is ever thrown.
 				votes.pop(dropped_choice, None)
-			choice = voter.get_first_choice(self, dropped_choice)
+				excluded.add(dropped_choice)
+			choice = voter.get_first_choice(self, excluded)
 			if choice:
-				votes.get(choice, []).append(voter)
+				votes[choice].add(voter)
 
 		for voter in self.get_voters():
 			add_vote(voter)
@@ -94,9 +96,10 @@ class Question(models.Model):
 			lowest_votes = min(map(len, votes.values()))
 			
 			# The last one to go will indeed be the winner.
-			winner = {choice for choice, voters in votes if len(voters) == lowest_votes}
+			winner = {choice for choice, voters in votes.items() if len(voters) == lowest_votes}
 			for to_drop in winner:
-				add_vote(votes[to_drop], dropped_choice=to_drop)
+				for voter in list(votes[to_drop]):
+					add_vote(voter, dropped_choice=to_drop)
 		
 		# Exclude the winner set as well as the ones already excluded.
 		return [winner] + self.get_results(exclusion | winner)
@@ -130,16 +133,15 @@ class AnonVoter(models.Model):
 			result[vote.choice.id] = vote.rank
 		return result
 			
-	# If dropped_choice=None, returns the vote with the highest rank. If dropped_choice != None, returns the next highest preference.
-	def get_first_choice(self, question, dropped_choice=None):
-		result = Vote.objects.filter(choice__question=question).filter(voter=self)
-		if dropped_choice:
-			result = result.filter(rank__gt=dropped_choice.rank)
-		if len(result) == 0:
-			return None
+	# Returns the highest priority vote not in exclude. If all are excluded, then None is returned.
+	@transaction.atomic
+	def get_first_choice(self, question, exclude=set()):
+		result = Vote.objects.filter(choice__question=question).filter(voter=self).order_by('rank')
+		for vote in result:
+			if vote.choice not in exclude:
+				return vote.choice
 		else:
-			# Sort the set and return the one with the lowest rank.
-			return result.order_by('rank')[0].choice
+			return None
 	
 class Vote(models.Model):
 	# Can get back to question through the choice field.

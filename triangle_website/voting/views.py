@@ -78,9 +78,14 @@ def results_page(request, vote_id):
 def get_winner_str(question):
 	winner_str = ''
 	first1 = True
+	print(len(question.get_results()[0]))
 	for winner_set in question.get_results():
 		if len(winner_set) > 1:
 			winner_str += 'tie '
+		if first1:
+			first1 = False
+		else:
+			winner_str += '; '
 		first2 = True
 		for winner in winner_set:
 			if first2:
@@ -88,10 +93,6 @@ def get_winner_str(question):
 				first2 = False
 			else:
 				winner_str += ', ' + winner.text
-		if first1:
-			first1 = False
-		else:
-			winner_str += '; '
 	return winner_str
 
 def new_vote(request):
