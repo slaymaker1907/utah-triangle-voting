@@ -92,7 +92,7 @@ class Question(models.Model):
 			add_vote(voter)
 		
 		# Initialize winner just in case there are no voters yet.
-		winner = set(self.choice_set.all())
+		winner = set(set(self.choice_set.all()) - exclusion)
 		while len(votes) > 0:
 			lowest_votes = min(map(len, votes.values()))
 			
@@ -103,6 +103,7 @@ class Question(models.Model):
 					add_vote(voter, dropped_choice=to_drop)
 		
 		# Exclude the winner set as well as the ones already excluded.
+		#[print(choice.text) for choice in winner]
 		return [winner] + self.get_results(exclusion | winner)
 		
 	def get_voters(self):
