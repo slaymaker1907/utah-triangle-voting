@@ -84,18 +84,12 @@ class Question(models.Model):
 			choice = voter.get_first_choice(self, dropped_choice)
 			if choice:
 				votes.get(choice, []).append(voter)
-				
-		def majority():
-			voter_count = len([voter for sublist in votes.values() for voter in sublist])
-			# If even, say 8, then need 5. If odd, say 7, then need 4. This arithmetic should work
-			return voter_count // 2 + 1
-		
+
 		for voter in self.get_voters():
 			add_vote(voter)
 		
 		# Initialize winner just in case there are no voters yet.
 		winner = set(self.choice_set.all())
-		
 		while len(votes) > 0:
 			lowest_votes = min(map(len, votes.values()))
 			
@@ -145,7 +139,7 @@ class AnonVoter(models.Model):
 			return None
 		else:
 			# Sort the set and return the one with the lowest rank.
-			return result.order_by('rank')[0]
+			return result.order_by('rank')[0].choice
 	
 class Vote(models.Model):
 	# Can get back to question through the choice field.
