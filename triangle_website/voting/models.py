@@ -1,6 +1,8 @@
 from django.db import models, transaction
 from django.contrib.auth.models import User
 import itertools
+from math import ceil
+
 
 # Not currently a full model with access to DB.
 class Election(models.Model):
@@ -60,7 +62,50 @@ class Question(models.Model):
 		for voter in self.election.anonvoter_set.all():
 			result.append(voter.get_vote(self))
 		return result
-
+		
+	# This tabulates results for an alternative vote. Be sure to do a multithreaded test on this method.
+	# The result is a list of sets in order of who has won, i.e., result[0] is the absolute winner, result[1] runner up, etc.
+	# A winner set will always contain at least one member. If there is more than one member, that means that all members in the
+	# winner set have tied.
+	@transaction.atmoic
+	def get_results(self, exclusion=set()):
+		choices = list(self.choice_set.all())
+		
+		# Check to see if done.
+		if len(exclusion) == len(choices):
+			return []
+		if self.election.is_poll:
+			raise Exception('Can not get results for a poll from get_results.')
+				
+		votes = dict()
+		def add_vote(voter, dropped_choice=None):
+			if dropped_choice:
+				# Second arg ensures that no exception is ever thrown.
+				votes.pop(dropped_choice, None)
+			choice = voter.get_first_choice(self, dropped_choice)
+			if choice:
+				votes.get(choice, default=[]).append(voter)
+				
+		def majority():
+			voter_count = len([voter for sublist in votes.values() for voter in sublist])
+			# If even, say 8, then need 5. If odd, say 7, then need 4. This arithmetic should work
+			return voter_count // 2 + 1
+		
+		for voter in self.anonvoter_set.all():
+			add_vote(voter)
+		
+		choice_count = len(self.choice_set.all())
+		while len(votes) > 0:
+			lowest_votes = min(map(len, votes.values())
+			
+			# The last one to go will indeed be the winner.
+			winner = {choice for choice, voters in votes if len(voters) == lowest_votes}
+			for to_drop in winner:
+				add_vote(votes[to_drop], dropped_choice=to_drop)
+		
+		# Exclude the winner set as well as the ones already excluded.
+		return [winner] + get_results(exclusion | winner)
+		
 class Choice(models.Model):
 	text = models.CharField(max_length=255)
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -86,7 +131,18 @@ class AnonVoter(models.Model):
 		for vote in all_votes:
 			result[vote.choice.id] = vote.rank
 		return result
-
+			
+	# If dropped_choice=None, returns the vote with the highest rank. If dropped_choice != None, returns the next highest preference.
+	def get_first_choice(self, question, dropped_choice=None):
+		result = Vote.objects.filter(choice__question=question_arg).filter(voter=self)
+		if dropped_choice:
+			result = result.filter(rank__gt=dropped_choice.rank)
+		if len(result) == 0:
+			return None
+		else:
+			# Sort the set and return the one with the lowest rank.
+			return result.order_by('rank')[0]
+	
 class Vote(models.Model):
 	# Can get back to question through the choice field.
 	choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
