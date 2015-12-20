@@ -42,10 +42,16 @@ class Election(models.Model):
 			return Voter.objects.create(user=user, election=self)
 		except:
 			return None
+			
+	def __str__(self):
+		return self.name
 		
 class Passcode(models.Model):
 	code = models.CharField(max_length=255)
 	election = models.ForeignKey(Election, on_delete=models.CASCADE, unique=True)
+	
+	def __str__(self):
+		return 'election:' + str(self.election) + ' code:' + str(self.code)
 		
 class Voter(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -53,6 +59,9 @@ class Voter(models.Model):
 	
 	class Meta:
 		unique_together = ('user', 'election')
+		
+	def __str__(self):
+		return 'user: ' + str(self.user) + ' election:' + str(self.election)
 		
 class Question(models.Model):
 	name = models.CharField(max_length=255)
@@ -63,6 +72,9 @@ class Question(models.Model):
 		for voter in self.election.anonvoter_set.all():
 			result.append(voter.get_vote(self))
 		return result
+		
+	def __str__(self):
+		return self.name
 		
 	# This tabulates results for an alternative vote. Be sure to do a multithreaded test on this method.
 	# The result is a list of sets in order of who has won, i.e., result[0] is the absolute winner, result[1] runner up, etc.
@@ -121,6 +133,9 @@ class Choice(models.Model):
 			return result
 		else:
 			return 0
+			
+	def __str__(self):
+		return self.text
 
 # This is to collect votes for the Vote class. It stores a question mostly for convenience.
 class AnonVoter(models.Model):
@@ -144,6 +159,9 @@ class AnonVoter(models.Model):
 				return vote.choice
 		else:
 			return None
+			
+	def __str__(self):
+		return str(self.election)
 	
 class Vote(models.Model):
 	# Can get back to question through the choice field.
@@ -151,6 +169,9 @@ class Vote(models.Model):
 	rank = models.IntegerField()
 	# This is anonymous and can not be traced back to a user.
 	voter = models.ForeignKey(AnonVoter, on_delete=models.CASCADE)
+	
+	def __str__(self):
+		return 'voter:' + str(self.voter) + ' choice:' + str(self.choice) + ' rank:' + str(self.rank)
 
 class InvPasscode(Exception):
 	def __init__(self, message=''):
