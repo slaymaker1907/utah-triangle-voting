@@ -67,7 +67,7 @@ class Question(models.Model):
 	# The result is a list of sets in order of who has won, i.e., result[0] is the absolute winner, result[1] runner up, etc.
 	# A winner set will always contain at least one member. If there is more than one member, that means that all members in the
 	# winner set have tied.
-	@transaction.atmoic
+	@transaction.atomic
 	def get_results(self, exclusion=set()):
 	
 		# Check to see if done.
@@ -90,12 +90,14 @@ class Question(models.Model):
 			# If even, say 8, then need 5. If odd, say 7, then need 4. This arithmetic should work
 			return voter_count // 2 + 1
 		
-		for voter in self.anonvoter_set.all():
+		for voter in self.get_voters():
 			add_vote(voter)
 		
-		choice_count = len(self.choice_set.all())
+		# Initialize winner just in case there are no voters yet.
+		winner = set(self.choice_set.all())
+		
 		while len(votes) > 0:
-			lowest_votes = min(map(len, votes.values())
+			lowest_votes = min(map(len, votes.values()))
 			
 			# The last one to go will indeed be the winner.
 			winner = {choice for choice, voters in votes if len(voters) == lowest_votes}
@@ -103,7 +105,10 @@ class Question(models.Model):
 				add_vote(votes[to_drop], dropped_choice=to_drop)
 		
 		# Exclude the winner set as well as the ones already excluded.
-		return [winner] + get_results(exclusion | winner)
+		return [winner] + self.get_results(exclusion | winner)
+		
+	def get_voters(self):
+		return set(map(lambda vote: vote.voter, Vote.objects.filter(choice__question=self)))
 		
 class Choice(models.Model):
 	text = models.CharField(max_length=255)
