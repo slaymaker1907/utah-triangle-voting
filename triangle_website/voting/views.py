@@ -81,6 +81,8 @@ def create_vote(request):
 	new_vote.save()
 	if request.POST['useCode']:
 		new_vote.set_passcode(request.POST['passcode'])
+	
+	# Keep iterating until a question/choice combo isn't found.
 	for quesCount in itertools.count(1):
 		quesId = 'q' + str(quesCount)
 		if quesId in request.POST:
