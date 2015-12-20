@@ -69,10 +69,9 @@ class Question(models.Model):
 	# winner set have tied.
 	@transaction.atmoic
 	def get_results(self, exclusion=set()):
-		choices = list(self.choice_set.all())
-		
+	
 		# Check to see if done.
-		if len(exclusion) == len(choices):
+		if len(exclusion) == len(self.choice_set.all()):
 			return []
 		if self.election.is_poll:
 			raise Exception('Can not get results for a poll from get_results.')
