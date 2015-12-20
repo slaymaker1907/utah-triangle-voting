@@ -70,8 +70,8 @@ def results_page(request, vote_id):
 	if vote.is_poll:
 		temp = 'voting/results_poll.html'
 	else:
-		temp = 'voting/results.html'		
-		context['winner_strs'] = {question: get_winner_str(question) for question in vote.question_set.all()}
+		temp = 'voting/results.html'
+		context['winner_strs'] = {question : get_winner_str(question) for question in vote.question_set.all()}
 	return render(request, temp, context)
 
 # Constructs a string of the form one; tie second, third
@@ -92,6 +92,7 @@ def get_winner_str(question):
 			first1 = False
 		else:
 			winner_str += '; '
+	return winner_str
 
 def new_vote(request):
 	return render(request, 'voting/new_vote.html')
