@@ -48,14 +48,14 @@ class Election(models.Model):
 		
 class Passcode(models.Model):
 	code = models.CharField(max_length=255)
-	election = models.ForeignKey(Election, on_delete=models.CASCADE, unique=True)
+	election = models.OneToOneField(Election, on_delete=models.CASCADE, db_index=True)
 	
 	def __str__(self):
 		return 'election:' + str(self.election) + ' code:' + str(self.code)
 		
 class Voter(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	election = models.ForeignKey(Election, on_delete=models.CASCADE)
+	election = models.ForeignKey(Election, on_delete=models.CASCADE, db_index=True)
 	
 	class Meta:
 		unique_together = ('user', 'election')
@@ -65,7 +65,7 @@ class Voter(models.Model):
 		
 class Question(models.Model):
 	name = models.CharField(max_length=255)
-	election = models.ForeignKey(Election, on_delete=models.CASCADE)
+	election = models.ForeignKey(Election, on_delete=models.CASCADE, db_index=True)
 	
 	def votes(self):
 		result = []
@@ -129,7 +129,7 @@ class Question(models.Model):
 		
 class Choice(models.Model):
 	text = models.CharField(max_length=255)
-	question = models.ForeignKey(Question, on_delete=models.CASCADE)
+	question = models.ForeignKey(Question, on_delete=models.CASCADE, db_index=True)
 	
 	# This is a convenience method for a poll to figure out how many voted for something.
 	def sum_rank(self):
@@ -145,7 +145,7 @@ class Choice(models.Model):
 
 # This is to collect votes for the Vote class. It stores a question mostly for convenience.
 class AnonVoter(models.Model):
-	election = models.ForeignKey(Election, on_delete=models.CASCADE)
+	election = models.ForeignKey(Election, on_delete=models.CASCADE, db_index=True)
 	
 	# This gets the rank for this user for a particular choice. To get the rank, call result[choice.id].
 	def get_vote(self, question_arg):
@@ -171,7 +171,7 @@ class AnonVoter(models.Model):
 	
 class Vote(models.Model):
 	# Can get back to question through the choice field.
-	choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+	choice = models.ForeignKey(Choice, on_delete=models.CASCADE, db_index=True)
 	rank = models.IntegerField()
 	# This is anonymous and can not be traced back to a user.
 	voter = models.ForeignKey(AnonVoter, on_delete=models.CASCADE)
