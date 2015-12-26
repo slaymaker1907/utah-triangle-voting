@@ -4,7 +4,7 @@ from .models import *
 from django.core.urlresolvers import reverse
 import itertools
 from django.db import transaction
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 def voting_index(request):
@@ -130,3 +130,22 @@ def create_vote(request):
 		else:
 			break
 	return HttpResponseRedirect(reverse('voting:index'))
+	
+def sign_in(request, context={}):
+	if request.method == 'POST':
+		username = request.POST['user']
+		password = request.POST['pwd']
+		user = authenticate(username=username, password=password)
+		if user is not None and user.is_active:
+			if not request.POST['remember-me']:
+				request.session.set_expiry(0)
+			login(request, user)
+		else:
+			return HttpResponseRedirect(reverse('voting:sign_in_err', args=['Incorrect username/password.']))
+		return HttpResponseRedirect(reverse('voting:index'))
+	else:
+		print(context)
+		return render(request, 'voting/login.html')
+		
+def sign_in_err(request, message):
+	return render(request, 'voting/login.html', context={'error':message})
