@@ -57,3 +57,4 @@ docs/_build/
 target/
 triangle_website/triangle_website/settings.py
 triangle_website/db.sqlite3
+admin_info.txt
