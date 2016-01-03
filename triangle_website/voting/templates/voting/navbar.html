@@ -10,7 +10,6 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				{% if not user.is_authenticated %}
-				<li><a href="{% url 'voting:sign_up' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
 				<li><a href="{% url 'voting:sign_in' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
 				{% else %}
 				<li><a href="{% url 'voting:signout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
