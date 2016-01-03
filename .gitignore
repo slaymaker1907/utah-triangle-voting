@@ -56,3 +56,4 @@ docs/_build/
 # PyBuilder
 target/
 triangle_website/triangle_website/settings.py
+triangle_website/db.sqlite3

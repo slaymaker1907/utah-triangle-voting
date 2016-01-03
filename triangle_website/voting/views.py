@@ -4,10 +4,13 @@ from .models import *
 from django.core.urlresolvers import reverse
 import itertools
 from django.db import transaction
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 import requests
 from django.conf import settings
 import json
+from django.contrib.auth.models import User
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 def voting_index(request):
@@ -159,8 +162,25 @@ def sign_up(request):
 def create_user(request):
 	recap_resp = request.POST['g-recaptcha-response']
 	result = requests.post('https://www.google.com/recaptcha/api/siteverify', data={'secret':settings.RECAPTCHA_SECRET, 'response':recap_resp}).text
+	error = lambda message: HttpResponseRedirect(reverse('voting:sign_up_err', args=[message]))
 	if json.loads(result)['success']:
-		print('YAAAS')
+		user = request.POST['user']
+		passw = request.POST['pwd']
+		email = request.POST['email']
+		if passw != request.POST['pwd_rep']:
+			return error('Passwords must match.')
+		try:
+			validate_email(email)
+		except:
+			return error('Invalid email address.')
+		user = User.objects.create_user(user, password=passw, email=email)
 	else:
-		print('NOOOO')
-	return render(request, 'voting/new_user.html')
+		return error('Invalid captcha. Please try again.')
+	return HttpResponseRedirect(reverse('voting:index'))
+	
+def sign_up_err(request, error):
+	return render(request, 'voting/new_user.html', context={'error':error})
+	
+def signout(request):
+	logout(request)
+	return HttpResponseRedirect(reverse('voting:index'))
