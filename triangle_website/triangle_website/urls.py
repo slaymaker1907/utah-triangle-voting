@@ -20,4 +20,5 @@ from django.contrib import admin
 urlpatterns = [
 	url(r'^voting/', include('voting.urls')),
     url(r'^admin/', admin.site.urls),
+	url(r'^$', include('voting.default_urls'))
 ]

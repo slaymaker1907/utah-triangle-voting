@@ -184,3 +184,6 @@ def sign_up_err(request, error):
 def signout(request):
 	logout(request)
 	return HttpResponseRedirect(reverse('voting:index'))
+	
+def home_page(request):
+	return render(request, 'voting/home.html')

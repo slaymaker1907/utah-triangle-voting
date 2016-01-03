@@ -5,8 +5,8 @@
 		</div>
 		<div>
 			<ul class="nav navbar-nav">
-				<li><a href="#"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-				<li class="active"><a href="{% url 'voting:index' %}">Voting</a></li>
+				<li {% if is_home %}class="active"{% endif %}><a href="{% url 'default:index' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+				<li {% if is_voting %}class="active"{% endif %}><a href="{% url 'voting:index' %}">Voting</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				{% if not user.is_authenticated %}
