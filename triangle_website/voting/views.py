@@ -5,6 +5,9 @@ from django.core.urlresolvers import reverse
 import itertools
 from django.db import transaction
 from django.contrib.auth import authenticate, login
+import requests
+from django.conf import settings
+import json
 
 # Create your views here.
 def voting_index(request):
@@ -149,3 +152,15 @@ def sign_in(request, context={}):
 		
 def sign_in_err(request, message):
 	return render(request, 'voting/login.html', context={'error':message})
+	
+def sign_up(request):
+	return render(request, 'voting/new_user.html')
+	
+def create_user(request):
+	recap_resp = request.POST['g-recaptcha-response']
+	result = requests.post('https://www.google.com/recaptcha/api/siteverify', data={'secret':settings.RECAPTCHA_SECRET, 'response':recap_resp}).text
+	if json.loads(result)['success']:
+		print('YAAAS')
+	else:
+		print('NOOOO')
+	return render(request, 'voting/new_user.html')
