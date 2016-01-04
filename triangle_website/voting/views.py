@@ -22,8 +22,11 @@ def voting_index(request):
 	return render(request, 'voting/index.html', context)
 
 @login_required
+@transaction.atomic
 def vote_page(request, vote_id):
 	vote = get_object_or_404(Election, pk=vote_id)
+	if not vote.is_open:
+		return HttpResponseRedirect(reverse('voting:results', args=[vote_id]))
 	if vote.is_poll:
 		temp = 'voting/vote_poll.html'
 	else:

@@ -1,16 +1,3 @@
-/**var data = {
-	labels: ["Zion", "Bryce Canyon", "Grand Junction"],
-	datasets: [{
-			label: "Main",
-			fillColor: "rgba(151,187,205,0.5)",
-			strokeColor: "rgba(151,187,205,0.8)",
-			highlightFill: "rgba(151,187,205,0.75)",
-			highlightStroke: "rgba(151,187,205,1)",
-			data: [7, 10, 3]
-	}]
-}
-**/
-
 function getResultChartData(results) {
 	var chartLabels = [];
 	var dataSet = [];
@@ -36,8 +23,18 @@ function plotResults(chartId, data) {
 	return new Chart(ctx).Bar(getResultChartData(data, {"responsive":true}));
 }
 
-var data1 = {"Zion":7, "Bryce Canyon":10, "Grand Junction":3}
-var barChart1 = plotResults("chart1", data1);
+var questions = $('[ques_id]')
+questions.each(function(quesNum)
+{
+	var question = $(questions[quesNum])
+	var choices = question.find('[choice]')
+	var data = {}
+	choices.each(function(choiceI)
+	{
+		var choice = $(choices[choiceI])
+		data[choice.attr('choice_text')] = choice.attr('vote_count')
+	});
+	var barChart = plotResults("chart" + question.attr('ques_id'), data);
+});
 
-var data2 = {"Yes":17, "No":3}
-var barChart2 = plotResults("chart2", data2);
+
