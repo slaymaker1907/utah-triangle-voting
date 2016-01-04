@@ -14,7 +14,6 @@ from django.core.exceptions import ValidationError
 from urllib.parse import urlencode
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
 def voting_index(request):
 	current_votes = Election.get_all(request.user, current=True)
 	old_votes = sorted(list(Election.get_all(request.user, current=False)), key=lambda elec: elec.id)[:5]
@@ -164,14 +163,13 @@ def sign_in(request, context={}):
 		password = request.POST['pwd']
 		user = authenticate(username=username, password=password)
 		if user is not None and user.is_active:
-			if not request.POST['remember-me']:
+			if 'remember-me' not in request.POST:
 				request.session.set_expiry(0)
 			login(request, user)
 		else:
 			return HttpResponseRedirect(reverse('voting:sign_in_err', args=['Incorrect username/password.']))
 		return HttpResponseRedirect(reverse('voting:index'))
 	else:
-		print(context)
 		return render(request, 'voting/login.html')
 		
 def sign_in_err(request, message):
@@ -227,7 +225,7 @@ def search(request):
 	if not vote_id.isdigit():
 		return get_redirect('voting:index', error='Invalid vote id ' + vote_id)
 	vote = get_object_or_404(Election, pk=vote_id)
-	if not vote.check_passcode(request.POST.get('passcode')):
+	if not vote.check_passcode(lambda:request.POST.get('passcode')):
 		return get_redirect('voting:index', error='Invalid passcode for vote ' + vote_id + '.')
 	return HttpResponseRedirect(reverse('voting:vote', args=[vote_id]))
 
