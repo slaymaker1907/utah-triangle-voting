@@ -5,7 +5,7 @@
 {% load voting_tags %}
 <div class="container theme-showcase" role="main">
 	
-	<h1>{{election.name}} Results</h1>
+	<h1>{{election.name}} Results: {% if election.is_open %}<a href="{% url 'voting:vote' election.id %}">vote again</a>{% endif %}</h1>
 	
 	{% for question in election.question_set.all %}
 	<hr></hr>

@@ -13,10 +13,12 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from urllib.parse import urlencode
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 
 def voting_index(request):
-	current_votes = Election.get_all(request.user, current=True)
-	old_votes = sorted(list(Election.get_all(request.user, current=False)), key=lambda elec: elec.id)[:5]
+	get_votes = lambda current:sorted(list(Election.get_all(request.user, current=current)), key=lambda elec: -1 * elec.id)
+	current_votes = get_votes(True)
+	old_votes = get_votes(False)[:5]
 	context = {"current_votes": current_votes, "complete_votes":old_votes, "error":request.GET.get('error')}
 	return render(request, 'voting/index.html', context)
 
@@ -122,7 +124,8 @@ def new_vote(request):
 	return render(request, 'voting/new_vote.html')
 
 def history(request, page):
-	return render(request, 'voting/history.html')
+	elections = Election.get_all(request.user)
+	return render(request, 'voting/history.html', context={'elections':elections})
 
 # A helper method for managing things. ** CAUTION: Deletes all elections **
 def delete_votes():
@@ -192,8 +195,12 @@ def create_user(request):
 			validate_email(email)
 		except:
 			return error('Invalid email address.')
+		try:
+			send_mail('Subject', 'Add user ' + username, 'dyllongagnier@gmail.com', ['dyllongagnier@gmail.com'], fail_silently=False)
+		except:
+			return redir_to_mess('Error in sending email', 'User ' + username + ' was created. However, failed in sending alert to webmaster. Please contact Utah Triangle leadership (including the webmaster) as soon as possible to gain full privledges on site.')
 		user = User.objects.create_user(username, password=passw, email=email, is_active=False)
-		return get_redirect('voting:message', subject='Created New User', body='Created new user ' + user + '. Please be patient while the admins evaluate your account. Until then, you will only be granted limited access to the site.')
+		return get_redirect('voting:message', subject='Created New User', body='Created new user ' + username + '. Please be patient while the admins evaluate your account. Until then, you will only be granted limited access to the site.')
 	else:
 		return error('Invalid captcha. Please try again.')
 	

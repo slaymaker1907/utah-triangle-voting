@@ -55,8 +55,9 @@ class Election(models.Model):
 			return False
 		return self.get_passcode() is None or self.creator == user or self.has_voted(user)
 		
+	# If current is true, then only open elections are returned.
 	@staticmethod
-	def get_all(user, current=True):
+	def get_all(user, current=False):
 		if not (user.is_authenticated() or user.is_active):
 			return set()
 		valid_currency = lambda elec: elec.is_open or not current
