@@ -1,6 +1,6 @@
 {% extends "voting/header.html" %}
 {% load staticfiles %}
-{% block title %}Triangle Sign Up{% endblock %}
+{% block title %}Create New User{% endblock %}
 {% block content %}
 <link href="{% static 'voting/css/signin.css' %}" rel="stylesheet">
 {% include "voting/navbar.html" %}
@@ -27,7 +27,7 @@
 		<label for="inputPassword" class="sr-only">Repeat password</label>
 		<input type="password" id="inputPasswordRep" class="form-control" placeholder="Repeat password" required name="pwd_rep" style="margin-bottom:20px;"></input>
 		
-		<div class="g-recaptcha" data-sitekey="6LeGXRQTAAAAAGWs_O-vRSOJa4bx7kyoGErDS08H"></div>
+		<div class="g-recaptcha" data-sitekey="{{recaptcha_key}}"></div>
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
 	</form>
 </div> <!-- /container -->

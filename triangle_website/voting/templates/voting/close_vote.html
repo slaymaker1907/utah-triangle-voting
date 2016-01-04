@@ -1,0 +1,9 @@
+{% if can_close %}
+<div class="row">
+	{% if election.is_open %}
+	<a href="{% url 'voting:close_vote' election.id 'True' %}" class="btn btn-primary">Close vote</a>
+	{% else %}
+	<a href="{% url 'voting:close_vote' election.id 'False' %}" class="btn btn-primary">Re-open vote</a>
+	{% endif %}
+</div>
+{% endif %}

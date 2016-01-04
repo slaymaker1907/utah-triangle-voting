@@ -11,14 +11,17 @@ import json
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from urllib.parse import urlencode
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def voting_index(request):
-	current_votes = Election.objects.filter(is_open=True)
-	old_votes = Election.objects.filter(is_open=False).order_by('-id')[:5]
-	context = {"current_votes": current_votes, "complete_votes":old_votes}
+	current_votes = Election.get_all(request.user, current=True)
+	old_votes = sorted(list(Election.get_all(request.user, current=False)), key=lambda elec: elec.id)[:5]
+	context = {"current_votes": current_votes, "complete_votes":old_votes, "error":request.GET.get('error')}
 	return render(request, 'voting/index.html', context)
-	
+
+@login_required
 def vote_page(request, vote_id):
 	vote = get_object_or_404(Election, pk=vote_id)
 	if vote.is_poll:
@@ -26,27 +29,35 @@ def vote_page(request, vote_id):
 	else:
 		temp = 'voting/vote.html'
 	return render(request, temp, {"vote":vote})
-	
+
+@login_required
 @transaction.atomic
 def submit_vote(request, vote_id):
-	# Should never fail except for very strange circumstances
-	vote = Election.objects.get(pk=vote_id)
-	
-	# Check passcode
-	if not vote.check_passcode(lambda: request.POST['passcode']):
-		raise InvPasscode()
+	try:
+		# Should never fail except for very strange circumstances
+		vote = Election.objects.get(pk=vote_id)
 		
-	user = authenticate(username=request.POST['username'], password=request.POST['password'])
-	
-	if not user:
-		raise VotingError('Error, incorrect username/password.')
-	
-	# Make sure you can't vote twice.
-	if not vote.set_voted(user):
-		raise VotingError('Error, ' + user.username + ' has already voted in ' + vote.name)
-	
-	save_vote(request, vote)
-	return HttpResponseRedirect(reverse('voting:results', args=[str(vote.id)]))
+		if not vote.is_open:
+			raise VotingError('Error, vote ' + vote_id + ' is not open at this time.')
+		
+		# Check passcode
+		if not vote.check_passcode(lambda: request.POST['passcode']):
+			raise InvPasscode()
+			
+		user = authenticate(username=request.POST['username'], password=request.POST['password'])
+		
+		if not user or not user.is_active:
+			raise VotingError('Error, incorrect username/password.')
+		
+		# Make sure you can't vote twice.
+		if not vote.set_voted(user):
+			raise VotingError('Error, ' + user.username + ' has already voted in ' + vote.name)
+		
+		save_vote(request, vote)
+		return HttpResponseRedirect(reverse('voting:results', args=[str(vote.id)]))
+	except Exception as e:
+		return redir_to_mess('Voting Error', str(e))
+		
 	
 # This is just a helper method, not an actual view.
 @transaction.atomic
@@ -70,9 +81,11 @@ def save_vote(request, elec):
 					new_vote = Vote(rank=int(request.POST[opt]), choice=choice, voter=voter)
 					new_vote.save()
 
+@login_required
 def results_page(request, vote_id):
 	vote = get_object_or_404(Election, pk=vote_id)
-	context = {'election':vote}
+	can_close = vote.creator == request.user
+	context = {'election':vote, 'can_close':can_close}
 	if vote.is_poll:
 		temp = 'voting/results_poll.html'
 	else:
@@ -101,23 +114,28 @@ def get_winner_str(question):
 				winner_str += ', ' + winner.text
 	return winner_str
 
+@login_required
 def new_vote(request):
+	#return get_redirect('voting:message', subject='Hello', body='World')
 	return render(request, 'voting/new_vote.html')
-	
+
 def history(request, page):
 	return render(request, 'voting/history.html')
 
+# A helper method for managing things. ** CAUTION: Deletes all elections **
 def delete_votes():
 	for elec in Election.objects.all():
 		elec.delete()
 
+@login_required
 @transaction.atomic
 def create_vote(request):
 	new_vote = Election()
 	new_vote.is_poll = request.POST["voteType"] == "poll"
 	new_vote.name = request.POST["voteName"]
+	new_vote.creator = request.user
 	new_vote.save()
-	if request.POST['useCode']:
+	if 'useCode' in request.POST:
 		new_vote.set_passcode(request.POST['passcode'])
 	
 	# Keep iterating until a question/choice combo isn't found.
@@ -156,15 +174,15 @@ def sign_in(request, context={}):
 def sign_in_err(request, message):
 	return render(request, 'voting/login.html', context={'error':message})
 	
-def sign_up(request):
-	return render(request, 'voting/new_user.html')
+def signup(request):
+	return render(request, 'voting/new_user.html', context={'recaptcha_key':settings.RECAPTCHA_KEY})
 	
 def create_user(request):
 	recap_resp = request.POST['g-recaptcha-response']
 	result = requests.post('https://www.google.com/recaptcha/api/siteverify', data={'secret':settings.RECAPTCHA_SECRET, 'response':recap_resp}).text
-	error = lambda message: HttpResponseRedirect(reverse('voting:sign_up_err', args=[message]))
+	error = lambda message: get_redirect('voting:sign_up_err', error=message)
 	if json.loads(result)['success']:
-		user = request.POST['user']
+		username = request.POST['user']
 		passw = request.POST['pwd']
 		email = request.POST['email']
 		if passw != request.POST['pwd_rep']:
@@ -173,17 +191,52 @@ def create_user(request):
 			validate_email(email)
 		except:
 			return error('Invalid email address.')
-		user = User.objects.create_user(user, password=passw, email=email)
+		user = User.objects.create_user(username, password=passw, email=email, is_active=False)
+		return get_redirect('voting:message', subject='Created New User', body='Created new user ' + user + '. Please be patient while the admins evaluate your account. Until then, you will only be granted limited access to the site.')
 	else:
 		return error('Invalid captcha. Please try again.')
-	return HttpResponseRedirect(reverse('voting:index'))
 	
-def sign_up_err(request, error):
-	return render(request, 'voting/new_user.html', context={'error':error})
-	
+def sign_up_err(request):
+	return render(request, 'voting/new_user.html', context={'error':request.GET['error'], 'recaptcha_key':settings.RECAPTCHA_KEY})
+
 def signout(request):
 	logout(request)
 	return HttpResponseRedirect(reverse('voting:index'))
-	
+
 def home_page(request):
 	return render(request, 'voting/home.html')
+	
+def server_message(request):
+	return render(request, 'voting/server_message.html', context={'subject':request.GET['subject'], 'body':request.GET['body']})
+	
+def redir_to_mess(subject, body):
+	return get_redirect('voting:message', subject=subject, body=body)
+
+# Url is the url to reverse. This adds the kwargs (which should be a dict) in the form of ?param1=val1
+def get_redirect(url, **kwargs):
+	url = reverse(url)
+	params = urlencode(kwargs)
+	return HttpResponseRedirect(url + '?' + params)
+
+@login_required
+def search(request):
+	vote_id = request.POST['vote_id']
+	if not vote_id.isdigit():
+		return get_redirect('voting:index', error='Invalid vote id ' + vote_id)
+	vote = get_object_or_404(Election, pk=vote_id)
+	if not vote.check_passcode(request.POST.get('passcode')):
+		return get_redirect('voting:index', error='Invalid passcode for vote ' + vote_id + '.')
+	return HttpResponseRedirect(reverse('voting:vote', args=[vote_id]))
+
+# 
+@login_required
+@transaction.atomic
+def close_vote(request, vote_id, close_vote):
+	close_vote = close_vote == 'True'
+	vote = get_object_or_404(Election, pk=vote_id)
+	if request.user == vote.creator:
+		vote.is_open= not close_vote
+		vote.save()
+		return redir_to_mess('Vote ' + str(vote.id) + ' Closed' if close_vote else ' Opened', 'Succesfully ' + ('closed ' if close_vote else 'opened ') + vote.name)
+	else:
+		return redir_to_mess('Permissions Error', 'Could not close ' + vote.name + ' because you are not the creator of that vote.')

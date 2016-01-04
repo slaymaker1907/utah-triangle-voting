@@ -3,12 +3,13 @@ from django.contrib.auth.models import User
 import itertools
 from math import ceil
 from collections import defaultdict
+from django.contrib.auth import authenticate
 
 
 # Not currently a full model with access to DB.
 class Election(models.Model):
 	# Uncomment the following line to force creation of votes to be tied to a user.
-	#creator = model.ForeignKey.(User, on_delete=models.CASCADE)
+	creator = models.ForeignKey(User, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255)
 	is_poll = models.BooleanField()
 	is_open = models.BooleanField(default=True)
@@ -45,6 +46,21 @@ class Election(models.Model):
 			
 	def __str__(self):
 		return self.name
+		
+	def has_voted(self, user):
+		return Voter.objects.filter(user=user).filter(election=self).exists()
+		
+	def can_see(self, user):
+		if not (user.is_authenticated() or user.is_active):
+			return False
+		return self.get_passcode() is None or self.creator == user or self.has_voted(user)
+		
+	@staticmethod
+	def get_all(user, current=True):
+		if not (user.is_authenticated() or user.is_active):
+			return set()
+		valid_currency = lambda elec: elec.is_open or not current
+		return {elec for elec in Election.objects.all() if elec.can_see(user) and valid_currency(elec)}
 		
 class Passcode(models.Model):
 	code = models.CharField(max_length=255)
@@ -180,7 +196,7 @@ class Vote(models.Model):
 		return 'voter:' + str(self.voter) + ' choice:' + str(self.choice) + ' rank:' + str(self.rank)
 
 class InvPasscode(Exception):
-	def __init__(self, message=''):
+	def __init__(self, message='Error, invalid passcode.'):
 		self.message = message
 		
 class VotingError(Exception):
