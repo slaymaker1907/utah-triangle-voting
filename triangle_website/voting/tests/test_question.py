@@ -37,3 +37,12 @@ class TestGetResults(TestCase):
 	def test_partial_vote(self):
 		self.vote(self.elec, {self.choice1:1, self.choice2:2})
 		self.assertVoteEqual(self.ques.get_results(), [{choice} for choice in [self.choice1, self.choice2, self.choice3]])
+	
+	# Tests that votes are moved to runner up.
+	def test_vote_realloc(self):
+		self.vote(self.elec, {self.choice1:1, self.choice2:2, self.choice3:3})
+		self.vote(self.elec, {self.choice1:2, self.choice2:1, self.choice3:3})
+		self.vote(self.elec, {self.choice1:2, self.choice2:3, self.choice3:1})
+		self.vote(self.elec, {self.choice1:1, self.choice2:2, self.choice3:3})
+		self.vote(self.elec, {self.choice1:2, self.choice2:3, self.choice3:1})
+		self.assertVoteEqual(self.ques.get_results(), [{self.choice1}, {self.choice2}, {self.choice3}])
