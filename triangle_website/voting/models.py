@@ -106,7 +106,6 @@ class Question(models.Model):
 			return []
 		if self.election.is_poll:
 			raise Exception('Can not get results for a poll from get_results.')
-		#pdb.set_trace()
 				
 		votes = dict()
 		excluded = set(exclusion)
