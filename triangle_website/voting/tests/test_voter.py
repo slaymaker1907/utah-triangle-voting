@@ -28,4 +28,6 @@ class VoterTest(TestCase):
 	# Tests that if a partial vote, returns None if all choices are excluded that the user selected.
 	def test_partial_highest_rank(self):
 		voter = self.vote(self.elec, {self.choice1:1, self.choice2:2})
+		self.assertEqual(self.choice1, voter.get_first_choice(self.ques))
+		self.assertEqual(self.choice2, voter.get_first_choice(self.ques, exclude={self.choice1}))
 		self.assertIsNone(voter.get_first_choice(self.ques, exclude={self.choice1, self.choice2}))
