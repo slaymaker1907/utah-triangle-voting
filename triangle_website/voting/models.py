@@ -4,6 +4,7 @@ import itertools
 from math import ceil
 from collections import defaultdict
 from django.contrib.auth import authenticate
+import pdb
 
 
 # Not currently a full model with access to DB.
@@ -105,12 +106,15 @@ class Question(models.Model):
 			return []
 		if self.election.is_poll:
 			raise Exception('Can not get results for a poll from get_results.')
+		#pdb.set_trace()
 				
 		votes = dict()
-		choices = set(self.choice_set.all())
+		excluded = set(exclusion)
+		
+		# Need to remove the excluded choices since those aren't included.
+		choices = set(self.choice_set.all()) - excluded
 		for choice in choices:
 			votes[choice] = set()
-		excluded = set(exclusion)
 		def remove_votes(choice):
 			excluded.add(choice)
 			result = votes[choice]
@@ -125,8 +129,8 @@ class Question(models.Model):
 		for voter in self.get_voters():
 			add_vote(voter)
 		
-		# Initialize winner just in case there are no voters yet.
-		winner = set(choices - exclusion)
+		# Make sure to make it a new set to avoid mutability issues.
+		winner = set(choices)
 		while len(votes) > 0:
 			lowest_votes = min(map(len, votes.values()))
 			
