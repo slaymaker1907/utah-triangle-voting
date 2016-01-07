@@ -56,6 +56,9 @@ class Election(models.Model):
 			return False
 		return self.get_passcode() is None or self.creator == user or self.has_voted(user)
 		
+	def get_all_voters(self):
+		return Voter.objects.filter(election=self)
+		
 	# If current is true, then only open elections are returned.
 	@staticmethod
 	def get_all(user, current=False):
