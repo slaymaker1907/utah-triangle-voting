@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from urllib.parse import urlencode
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from django import template
 
 def voting_index(request):
 	get_votes = lambda current:sorted(list(Election.get_all(request.user, current=current)), key=lambda elec: -1 * elec.id)
@@ -189,20 +190,31 @@ def create_user(request):
 		username = request.POST['user']
 		passw = request.POST['pwd']
 		email = request.POST['email']
+		firstname = request.POST['firstname']
+		lastname = request.POST['lastname']
+		try:
+			user = User.objects.create_user(username, password=passw, email=email, is_active=False, first_name=firstname, last_name=lastname)
+		except:
+			return error('User with usernam ' + username + ' already exists.')
 		if passw != request.POST['pwd_rep']:
 			return error('Passwords must match.')
 		try:
 			validate_email(email)
 		except:
 			return error('Invalid email address.')
+		mess = get_temp_str('voting/add_user_email.txt', context={'user':user})
 		try:
-			send_mail('Subject', 'Add user ' + username, 'dyllongagnier@gmail.com', ['dyllongagnier@gmail.com'], fail_silently=False)
-		except:
+			send_mail('Subject', mess, 'dyllongagnier@gmail.com', ['dyllongagnier@gmail.com'], fail_silently=False)
+		except Exception as e:
+			print(e)
 			return redir_to_mess('Error in sending email', 'User ' + username + ' was created. However, failed in sending alert to webmaster. Please contact Utah Triangle leadership (including the webmaster) as soon as possible to gain full privledges on site.')
-		user = User.objects.create_user(username, password=passw, email=email, is_active=False)
 		return get_redirect('voting:message', subject='Created New User', body='Created new user ' + username + '. Please be patient while the admins evaluate your account. Until then, you will only be granted limited access to the site.')
 	else:
 		return error('Invalid captcha. Please try again.')
+		
+def get_temp_str(temp_name, context={}):
+	temp = template.loader.get_template(temp_name)
+	return temp.render(context)
 	
 def sign_up_err(request):
 	return render(request, 'voting/new_user.html', context={'error':request.GET['error'], 'recaptcha_key':settings.RECAPTCHA_KEY})
