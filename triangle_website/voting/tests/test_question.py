@@ -32,5 +32,8 @@ class TestGetResults(TestCase):
 		
 	def test_no_first(self):
 		self.vote(self.elec, {self.choice1:2, self.choice2:3})
-		print(self.ques.get_results())
-		#self.assertVoteEqual(self.ques.get_results(), [{choice} for choice in [self.choice1, self.choice2, self.choice3]])
+		self.assertVoteEqual(self.ques.get_results(), [{choice} for choice in [self.choice1, self.choice2, self.choice3]])
+		
+	def test_partial_vote(self):
+		self.vote(self.elec, {self.choice1:1, self.choice2:2})
+		self.assertVoteEqual(self.ques.get_results(), [{choice} for choice in [self.choice1, self.choice2, self.choice3]])
