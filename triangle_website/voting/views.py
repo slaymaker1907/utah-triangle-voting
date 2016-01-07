@@ -104,8 +104,6 @@ def get_winner_str(question):
 	first1 = True
 	voters = question.get_voters()
 	for winner_set in question.get_results():
-		if len(winner_set) > 1:
-			winner_str += 'tie '
 		if first1:
 			first1 = False
 		else:
@@ -113,6 +111,8 @@ def get_winner_str(question):
 		first2 = True
 		for winner in winner_set:
 			if first2:
+				if len(winner_set) > 1:
+					winner_str += 'tie '
 				winner_str += winner.text
 				first2 = False
 			else:
