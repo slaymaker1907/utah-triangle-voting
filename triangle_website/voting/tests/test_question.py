@@ -5,7 +5,7 @@ from voting.tests.helpers import UserBank
 class TestGetResults(TestCase):
 	def setUp(self):
 		self.users = UserBank(5)
-		self.elec = Election.objects.create(name='elec', is_poll=False)
+		self.elec = Election.objects.create(name='elec', is_poll=False, creator=self.users.get(0))
 		self.ques = Question.objects.create(name='ques', election=self.elec)
 		self.choice1 = Choice.objects.create(text='choice1', question=self.ques)
 		self.choice2 = Choice.objects.create(text='choice2', question=self.ques)
@@ -29,3 +29,8 @@ class TestGetResults(TestCase):
 	def test_basic_vote(self):
 		self.vote(self.elec, {self.choice1:1, self.choice2:2, self.choice3:3})
 		self.assertVoteEqual(self.ques.get_results(), [{choice} for choice in [self.choice1, self.choice2, self.choice3]])
+		
+	def test_no_first(self):
+		self.vote(self.elec, {self.choice1:2, self.choice2:3})
+		print(self.ques.get_results())
+		#self.assertVoteEqual(self.ques.get_results(), [{choice} for choice in [self.choice1, self.choice2, self.choice3]])

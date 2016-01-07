@@ -6,9 +6,9 @@ from voting.tests.helpers import UserBank
 		
 class ElectionTest(TestCase):
 	def setUp(self):
-		self.elec = Election(name='elec', is_poll=False)
-		self.elec.save()
 		self.users = UserBank(1)
+		self.elec = Election(name='elec', is_poll=False, creator=self.users.get(0))
+		self.elec.save()
 
 	# Tests that a big name will generate an error.
 	def test_big_name(self):
