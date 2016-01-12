@@ -260,3 +260,6 @@ def close_vote(request, vote_id, close_vote):
 		return redir_to_mess('Vote ' + str(vote.id) + ' Closed' if close_vote else ' Opened', 'Succesfully ' + ('closed ' if close_vote else 'opened ') + vote.name)
 	else:
 		return redir_to_mess('Permissions Error', 'Could not close ' + vote.name + ' because you are not the creator of that vote.')
+		
+def calendar(request):
+	return render(request, 'voting/calendar.html')
