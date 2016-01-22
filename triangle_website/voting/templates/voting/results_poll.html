@@ -1,11 +1,7 @@
-{% extends "voting/header.html" %}
-{% block title %}Votes #{{election.id}} Results{% endblock %}
-{% block content %}
-{% load staticfiles %}
-{% include "voting/navbar.html" %}
-<div class="container theme-showcase" role="main">	
-	<h1>{{election.name}} {% if election.is_open %}<a href="{% url 'voting:vote' election.id %}">vote again</a>{% endif %}</h1>
-	
+{% extends "voting/results_base.html" %}
+{% load voting_tags %}
+{% load static %}
+{% block vote_results %}
 	{% for question in election.question_set.all %}
 	<div ques_id='{{question.id}}'>
 		<hr></hr>
@@ -41,12 +37,7 @@
 		</div>
 	</div>
 	{% endfor %}
-	
-	{% include 'voting/who_voted.html' %}
-	{% include 'voting/close_vote.html' %}
-	
-</div> <!-- /container -->
-{% endblock %} <!-- Ending the content block -->
+{% endblock %}
 {% block endscripts %}
 <script src="{% static 'voting/js/chart.min.js' %}"></script>
 <script src="{% static 'voting/js/plot_results.js' %}"></script>

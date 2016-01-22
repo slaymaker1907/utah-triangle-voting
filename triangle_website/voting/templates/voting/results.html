@@ -1,12 +1,6 @@
-{% extends "voting/header.html" %}
-{% block title %}Votes #{{election.id}} Results{% endblock %}
-{% block content %}
-{% include "voting/navbar.html" %}
+{% extends "voting/results_base.html" %}
 {% load voting_tags %}
-<div class="container theme-showcase" role="main">
-	
-	<h1>{{election.name}} Results: {% if election.is_open %}<a href="{% url 'voting:vote' election.id %}">vote again</a>{% endif %}</h1>
-	
+{% block vote_results %}
 	{% for question in election.question_set.all %}
 	<hr></hr>
 	<h3>{{question.name}}</h3>
@@ -35,10 +29,4 @@
 		</tbody>
 	</table>
 	{% endfor %}
-	
-	{% include 'voting/who_voted.html' %}
-	{% include 'voting/close_vote.html' %}
-
-	
-</div> <!-- /container -->
-{% endblock %} <!-- Ending the content block -->
+{% endblock %}

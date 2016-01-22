@@ -1,0 +1,39 @@
+{% extends "voting/header.html" %}
+{% block title %}Votes #{{election.id}} Results{% endblock %}
+{% block content %}
+{% include "voting/navbar.html" %}
+{% load voting_tags %}
+<div class="container theme-showcase" role="main">
+	
+	<h1>{{election.name}} Results: {% if election.is_open %}<a href="{% url 'voting:vote' election.id %}">vote again</a>{% endif %}</h1>
+	
+	{% if not election.is_open %}
+		{% block vote_results %}
+		{% endblock %}
+	{% endif %}
+	
+	<div class="row">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Voters in this election</h3>
+			</div>
+			<ul class="list-group">
+			{% for voter in election.get_all_voters %}
+				<li class="list-group-item">{{voter.user.username}}:{{voter.user.first_name}} {{voter.user.last_name}}</li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+	
+	{% if can_close %}
+		<div class="row">
+			{% if election.is_open %}
+			<a href="{% url 'voting:close_vote' election.id 'True' %}" class="btn btn-primary">Close vote</a>
+			{% else %}
+			<a href="{% url 'voting:close_vote' election.id 'False' %}" class="btn btn-primary">Re-open vote</a>
+			{% endif %}
+		</div>
+	{% endif %}
+	
+</div> <!-- /container -->
+{% endblock %} <!-- Ending the content block -->
