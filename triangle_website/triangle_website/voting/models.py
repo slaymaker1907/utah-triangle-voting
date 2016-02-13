@@ -4,7 +4,7 @@ import itertools
 from math import ceil
 from collections import defaultdict
 from django.contrib.auth import authenticate
-import pdb
+import uuid
 
 
 # Not currently a full model with access to DB.
@@ -70,11 +70,11 @@ class Election(models.Model):
 class Passcode(models.Model):
 	code = models.CharField(max_length=255)
 	election = models.OneToOneField(Election, on_delete=models.CASCADE, db_index=True)
-	
 	def __str__(self):
 		return 'election:' + str(self.election) + ' code:' + str(self.code)
 		
 class Voter(models.Model):
+	uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	election = models.ForeignKey(Election, on_delete=models.CASCADE, db_index=True)
 	
