@@ -1,6 +1,6 @@
 from django.test import TestCase
-from voting.models import *
-from voting.tests.helpers import UserBank
+from triangle_website.voting.models import *
+from triangle_website.voting.tests.helpers import UserBank
 from django.db.utils import IntegrityError
 
 class VoterTest(TestCase):
@@ -11,7 +11,7 @@ class VoterTest(TestCase):
 		self.choice1 = Choice.objects.create(text='choice1', question=self.ques)
 		self.choice2 = Choice.objects.create(text='choice2', question=self.ques)
 		self.choice3 = Choice.objects.create(text='choice3', question=self.ques)
-		
+
 	def vote(self, elec, ranking):
 		voter = AnonVoter.objects.create(election=elec)
 		for choice, rank in ranking.items():
@@ -24,7 +24,7 @@ class VoterTest(TestCase):
 		Voter.objects.create(election=elec, user=user)
 		with self.assertRaises(IntegrityError):
 			Voter.objects.create(election=elec, user=user)
-			
+
 	# Tests that if a partial vote, returns None if all choices are excluded that the user selected.
 	def test_partial_highest_rank(self):
 		voter = self.vote(self.elec, {self.choice1:1, self.choice2:2})

@@ -4,17 +4,9 @@ from .models import *
 from django.core.urlresolvers import reverse
 import itertools
 from django.db import transaction
-from django.contrib.auth import authenticate, login, logout
-import requests
-from django.conf import settings
-import json
-from django.contrib.auth.models import User
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
-from urllib.parse import urlencode
+from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
-from django import template
+from triangle_website.common.views import redir_to_mess
 
 def voting_index(request):
 	get_votes = lambda current:sorted(list(Election.get_all(request.user, current=current)), key=lambda elec: -1 * elec.id)
@@ -41,35 +33,35 @@ def submit_vote(request, vote_id):
 	try:
 		# Should never fail except for very strange circumstances
 		vote = Election.objects.get(pk=vote_id)
-		
+
 		if not vote.is_open:
 			raise VotingError('Error, vote ' + vote_id + ' is not open at this time.')
-		
+
 		# Check passcode
 		if not vote.check_passcode(lambda: request.POST['passcode']):
 			raise InvPasscode()
-			
+
 		user = authenticate(username=request.POST['username'], password=request.POST['password'])
-		
+
 		if not user or not user.is_active:
 			raise VotingError('Error, incorrect username/password.')
-		
+
 		# Make sure you can't vote twice.
 		if not vote.set_voted(user):
 			raise VotingError('Error, ' + user.username + ' has already voted in ' + vote.name)
-		
+
 		save_vote(request, vote)
 		return HttpResponseRedirect(reverse('voting:results', args=[str(vote.id)]))
 	except Exception as e:
-		return redir_to_mess('Voting Error', str(e))
-		
-	
+		return redir_to_mess('Voting Error', e.message)
+
+
 # This is just a helper method, not an actual view.
 @transaction.atomic
 def save_vote(request, elec):
 	voter = AnonVoter(election=elec)
 	voter.save()
-	
+
 	if (elec.is_poll):
 		for question in elec.question_set.all():
 			id = str(question.id)
@@ -143,7 +135,7 @@ def create_vote(request):
 	new_vote.save()
 	if 'useCode' in request.POST:
 		new_vote.set_passcode(request.POST['passcode'])
-	
+
 	# Keep iterating until a question/choice combo isn't found.
 	for quesCount in itertools.count(1):
 		quesId = 'q' + str(quesCount)
