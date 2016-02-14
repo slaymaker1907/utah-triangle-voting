@@ -1,6 +1,7 @@
 from django.db.models import *
 from django.contrib.auth.models import User
 from django import forms
+from django.core.validators import RegexValidator
 
 class AcademicYear:
     unknown = 0
@@ -47,10 +48,12 @@ class TShirtSize:
 
 class Brother(Model):
     user = OneToOneField(User, on_delete=CASCADE, db_index=True)
+    phone_regex = RegexValidator(regex=r'^\+?1?\(?\d{3,3}\) *-? *\d{3,3} *-? *\d{4,4}$', message="Invalid phone number. (xxx)-xxx-xxxx is valid.")
+    phone = CharField(max_length=30, validators=[phone_regex], default='')
     year = IntegerField(default=AcademicYear.unknown, choices=AcademicYear.ALL)
     major = CharField(max_length=100, default='')
     address = TextField(default='')
-    parents_address = TextField('')
+    parents_address = TextField(default='')
     emergency_contact = TextField(default='')
 
     position = CharField(max_length=100, default='')
@@ -65,5 +68,5 @@ class Brother(Model):
 class BrotherForm(forms.ModelForm):
     class Meta:
         model=Brother
-        fields = ['year', 'major', 'address', 'parents_address', 'emergency_contact', 'position', 'member_status',
-         'initiation_date', 'tshirt', 'student_orgs', 'allergies', 'interests']
+        fields = ['phone', 'year', 'major', 'address', 'parents_address', 'emergency_contact', 'position', 'member_status',
+         'initiation_date', 'tshirt', 'student_orgs', 'allergies', 'interests',]
