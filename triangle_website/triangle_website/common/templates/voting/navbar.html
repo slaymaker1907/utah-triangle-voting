@@ -1,14 +1,14 @@
 <nav class="navbar navbar-default">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="{% url 'default:index' %}">Utah Triangle</a>
+			<a class="navbar-brand" href="{% url 'common:index' %}">Utah Triangle</a>
 		</div>
 		<div>
 			<ul class="nav navbar-nav">
-				<li {% if is_home %}class="active"{% endif %}><a href="{% url 'default:index' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+				<li {% if is_home %}class="active"{% endif %}><a href="{% url 'common:index' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
 				<li {% if is_voting %}class="active"{% endif %}><a href="{% url 'voting:index' %}">Voting</a></li>
 				{% if user.is_authenticated %}
-				<li {% if is_calendar %}class="active"{% endif %}><a href="{% url 'default:calendar' %}">Calendar</a></li>
+				<li {% if is_calendar %}class="active"{% endif %}><a href="{% url 'common:calendar' %}">Calendar</a></li>
 				{% endif %}
 				{% if user.is_staff %}
 				<li><a href="{% url 'admin:index' %}">Admin</a></li>

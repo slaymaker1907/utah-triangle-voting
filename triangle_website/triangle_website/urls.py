@@ -22,5 +22,5 @@ urlpatterns = [
 	url(r'^voting/', include('triangle_website.voting.urls')),
     url(r'^admin/', admin.site.urls),
 	url('^auth/', include('django.contrib.auth.urls')),
-	url(r'^', include('triangle_website.voting.default_urls')),
+	url(r'^', include('triangle_website.common.urls')),
 ]
