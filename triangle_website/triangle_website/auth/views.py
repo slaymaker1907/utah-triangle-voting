@@ -12,11 +12,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
+from triangle_website.auth.models import *
 
 @login_required
 def profile(request):
-	# This is guaranteed to work since login required and OneToOneField.
-	brother = Brother.objects.get(user=request.user)
+	brother, found = Brother.objects.get_or_create(user=request.user)
+	form = BrotherForm(instance=brother)
+	return render(request, 'registration/profile.html', context={'brother':brother, 'form':form})
 
 @transaction.atomic
 def register(request):
