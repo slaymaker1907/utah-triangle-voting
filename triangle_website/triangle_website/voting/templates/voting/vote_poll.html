@@ -1,8 +1,8 @@
-{% extends "voting/header.html" %}
+{% extends "common/header.html" %}
 {% load staticfiles %}
 {% block title %}Vote #{{vote.id}}{% endblock %}
 {% block content %}
-{% include "voting/navbar.html" %}
+{% include "common/navbar.html" %}
 <link rel="stylesheet" href="{% static 'voting/css/form.css' %}"></link>
 <div class="container theme-showcase" role="main">
 	<div class="page-header">

@@ -8,14 +8,14 @@
 		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 		<meta name="description" content=""></meta>
 		<meta name="author" content=""></meta>
-		<link rel="icon" href="{% static 'voting/images/favicon.ico' %}"></link>
+		<link rel="icon" href="{% static 'common/images/favicon.ico' %}"></link>
 
 		<title>{% block title %}{% endblock %}</title>
 
 		<!-- Bootstrap core CSS -->
-		<link href="{% static 'voting/bootstrap-3.3.6/css/bootstrap.min.css' %}" rel="stylesheet"></link>
+		<link href="{% static 'common/bootstrap-3.3.6/css/bootstrap.min.css' %}" rel="stylesheet"></link>
 		<!-- Bootstrap theme -->
-		<link href="{% static 'voting/bootstrap-3.3.6/css/bootstrap-theme.min.css' %}" rel="stylesheet"></link>
+		<link href="{% static 'common/bootstrap-3.3.6/css/bootstrap-theme.min.css' %}" rel="stylesheet"></link>
 		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 		<link href="{% static 'voting/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet"></link>
 
@@ -37,9 +37,9 @@
 		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-		<script src="{% static 'voting/bootstrap-3.3.6/js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'common/bootstrap-3.3.6/js/bootstrap.min.js' %}"></script>
 		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-		<script src="{% static 'voting/js/ie10-viewport-bug-workaround.js' %} "></script>
+		<script src="{% static 'common/js/ie10-viewport-bug-workaround.js' %} "></script>
 		{% block endscripts %}{% endblock %}
 	</body>
 </html>

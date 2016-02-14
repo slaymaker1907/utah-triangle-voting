@@ -1,7 +1,7 @@
-{% extends "voting/header.html" %}
+{% extends "common/header.html" %}
 {% block title %}Utah Triangle Voting{% endblock %}
 {% block content %}
-{% include "voting/navbar.html" with is_voting=True %}
+{% include "common/navbar.html" with is_voting=True %}
 <div class="container theme-showcase" role="main">
 	{% if error %}
 	<div class="alert alert-danger" role="alert">

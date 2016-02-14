@@ -17,10 +17,10 @@
 			<ul class="nav navbar-nav navbar-right">
 				{% if not user.is_authenticated %}
 				<li><a href="{% url 'password_reset' %}"> Reset Password </a></li>
-				<li><a href="{% url 'voting:sign_in' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-				<li><a href="{% url 'voting:signup' %}"><span class="glyphicon glyphicon-user"></span> Sign up</a></li>
+				<li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+				<li><a href="{% url 'common:signup' %}"><span class="glyphicon glyphicon-user"></span> Sign up</a></li>
 				{% else %}
-				<li><a href="{% url 'voting:signout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+				<li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
 				{% endif %}
 			</ul>
 		</div>

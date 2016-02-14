@@ -1,9 +1,9 @@
-{% extends "voting/header.html" %}
+{% extends "common/header.html" %}
 {% load staticfiles %}
 {% block title %}Utah Triangle{% endblock %}
 {% block content %}
 <link href="{% static 'voting/css/home.css' %}" rel="stylesheet">
-{% include "voting/navbar.html" with is_home=True %}
+{% include "common/navbar.html" with is_home=True %}
 <div class="home_container">
 	<!-- Carousel
 	================================================== -->

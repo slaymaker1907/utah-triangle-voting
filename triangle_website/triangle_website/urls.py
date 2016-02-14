@@ -21,6 +21,6 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
 	url(r'^voting/', include('triangle_website.voting.urls')),
     url(r'^admin/', admin.site.urls),
-	url('^auth/', include('django.contrib.auth.urls')),
+	url('^auth/', include('triangle_website.auth.urls')),
 	url(r'^', include('triangle_website.common.urls')),
 ]

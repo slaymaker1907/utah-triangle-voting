@@ -1,7 +1,7 @@
-{% extends "voting/header.html" %}
+{% extends "common/header.html" %}
 {% block title %}Vote #{{vote.id}}{% endblock %}
 {% block content %}
-{% include "voting/navbar.html" %}
+{% include "common/navbar.html" %}
 <div class="container theme-showcase" role="main">
 	<div class="page-header">
 		<h1>{{vote.name}} - <a href="{% url 'voting:results' vote.id %}">see results</a></h1>

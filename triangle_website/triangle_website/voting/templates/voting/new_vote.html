@@ -1,8 +1,8 @@
-{% extends "voting/header.html" %}
+{% extends "common/header.html" %}
 {% load staticfiles %}
 {% block title %}Vote #1234{% endblock %}
 {% block content %}
-{% include "voting/navbar.html" %}
+{% include "common/navbar.html" %}
 <link rel="stylesheet" href="{% static 'voting/css/form.css' %}"></link>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.0/angular.min.js"></script>
 <div class="container theme-showcase" role="main" ng-app="formApp" ng-controller="mainControl">
