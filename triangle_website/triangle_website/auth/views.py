@@ -14,11 +14,25 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from triangle_website.auth.models import *
 
+import pdb
+
 @login_required
 def profile(request):
 	brother, found = Brother.objects.get_or_create(user=request.user)
-	form = BrotherForm(instance=brother)
-	return render(request, 'registration/profile.html', context={'brother':brother, 'form':form})
+	error = None
+	context = {'brother':brother}
+	if request.method == 'POST':
+		form = BrotherForm(request.POST, instance=brother)
+		if form.is_valid():
+			form.save()
+	else:
+		form = BrotherForm(request.GET, instance=brother)
+	if form.errors:
+		errors = ['{attri}: {error}'.format(error=', '.join(messages), attri=attri) for attri, messages in form.errors.items()]
+		pdb.set_trace()
+		context['error'] = ' '.join(errors)
+	context['form'] = form
+	return render(request, 'registration/profile.html', context=context)
 
 @transaction.atomic
 def register(request):

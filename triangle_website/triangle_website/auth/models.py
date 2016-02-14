@@ -15,6 +15,7 @@ class AcademicYear:
         (freshman, 'Freshman'),
         (sophomore, 'Sophomore'),
         (junior, 'Junior'),
+        (senior, 'Senior'),
         (alumnus, 'Alumnus'),
     )
 
@@ -53,17 +54,17 @@ class Brother(Model):
     year = IntegerField(default=AcademicYear.unknown, choices=AcademicYear.ALL)
     major = CharField(max_length=100, default='')
     address = TextField(default='')
-    parents_address = TextField(default='')
+    parents_address = TextField(default='', blank=True)
     emergency_contact = TextField(default='')
 
-    position = CharField(max_length=100, default='')
+    position = CharField(max_length=100, default='', blank=True)
     member_status = IntegerField(default=MemberStatus.unknown, choices=MemberStatus.ALL)
     initiation_date = DateField(null=True)
 
     tshirt = IntegerField(default=TShirtSize.unknown, choices=TShirtSize.ALL)
-    student_orgs = TextField(default='')
-    allergies = TextField(default='')
-    interests = TextField(default='')
+    student_orgs = TextField(default='', blank=True)
+    allergies = TextField(default='', blank=True)
+    interests = TextField(default='', blank=True)
 
 class BrotherForm(forms.ModelForm):
     class Meta:
