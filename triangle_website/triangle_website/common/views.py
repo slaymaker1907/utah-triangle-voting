@@ -19,4 +19,4 @@ def get_redirect(url, **kwargs):
 	return HttpResponseRedirect(url + '?' + params)
 
 def home_page(request):
-	return render(request, 'voting/home.html')
+	return render(request, 'common/home.html')

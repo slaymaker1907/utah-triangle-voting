@@ -11,6 +11,12 @@ from django.core import mail
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def profile(request):
+	# This is guaranteed to work since login required and OneToOneField.
+	brother = Brother.objects.get(user=request.user)
 
 @transaction.atomic
 def register(request):
