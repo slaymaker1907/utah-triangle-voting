@@ -72,7 +72,6 @@ class Passcode(models.Model):
 		return 'election:' + str(self.election) + ' code:' + str(self.code)
 
 class Voter(models.Model):
-	uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	election = models.ForeignKey(Election, on_delete=models.CASCADE, db_index=True)
 
