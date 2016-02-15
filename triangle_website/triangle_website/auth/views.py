@@ -17,6 +17,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 @login_required
+def brothers_doc(request):
+	return render(request, 'registration/brothers_doc.html', context={'brothers':Brother.objects.all()})
+
+@login_required
 def profile(request):
 	brother, found = Brother.objects.get_or_create(user=request.user)
 	error = None
@@ -25,7 +29,7 @@ def profile(request):
 		form = BrotherForm(request.POST, instance=brother)
 		if form.is_valid():
 			form.save()
-			return HttpResponseRedirect(reverse('common:index'))
+			return HttpResponseRedirect(reverse('profile'))
 	else:
 		form = BrotherForm(instance=brother)
 	if form.errors:
@@ -56,11 +60,13 @@ def register(request):
 			return error('Passwords must match.')
 		try:
 			user = User.objects.create_user(username, password=passw, email=email, is_active=False, first_name=firstname, last_name=lastname)
+			brother = Brother.objects.create(user=user)
 		except:
 			return error('User with username ' + username + ' already exists.')
 		old_error = error
 		def error(message):
 			user.delete()
+			brother.delete()
 			return old_error(message)
 		try:
 			validate_password(passw, user)

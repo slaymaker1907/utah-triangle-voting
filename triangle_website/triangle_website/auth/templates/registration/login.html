@@ -31,6 +31,8 @@
 		<input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'common:index' %}{% endif %}" />
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 	</form>
+
+	<a class="btn btn-lg btn-default" href="{% url 'password_reset' %}">Reset Password</a>
 </div> <!-- /container -->
 {% endblock %} <!-- Ending the content block -->
 {% block endscripts %}
