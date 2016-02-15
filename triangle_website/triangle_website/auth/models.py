@@ -49,7 +49,7 @@ class TShirtSize:
 
 class Brother(Model):
     user = OneToOneField(User, on_delete=CASCADE, db_index=True)
-    phone_regex = RegexValidator(regex=r'^\+?1?\(?\d{3,3}\) *-? *\d{3,3} *-? *\d{4,4}$', message="Invalid phone number. (xxx)-xxx-xxxx is valid.")
+    phone_regex = RegexValidator(regex=r'^\+?1?\(?\d{3,3}\)? *-? *\d{3,3} *-? *\d{4,4}$', message="Invalid phone number. (xxx)-xxx-xxxx is valid.")
     phone = CharField(max_length=30, validators=[phone_regex], default='')
     year = IntegerField(default=AcademicYear.unknown, choices=AcademicYear.ALL)
     major = CharField(max_length=100, default='')
@@ -59,7 +59,7 @@ class Brother(Model):
 
     position = CharField(max_length=100, default='', blank=True)
     member_status = IntegerField(default=MemberStatus.unknown, choices=MemberStatus.ALL)
-    initiation_date = DateField(null=True)
+    initiation_date = DateField(null=True, blank=True)
 
     tshirt = IntegerField(default=TShirtSize.unknown, choices=TShirtSize.ALL)
     student_orgs = TextField(default='', blank=True)

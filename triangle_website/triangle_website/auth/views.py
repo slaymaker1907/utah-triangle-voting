@@ -13,8 +13,8 @@ from django.contrib.auth.password_validation import validate_password
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from triangle_website.auth.models import *
-
-import pdb
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 @login_required
 def profile(request):
@@ -25,13 +25,15 @@ def profile(request):
 		form = BrotherForm(request.POST, instance=brother)
 		if form.is_valid():
 			form.save()
+			return HttpResponseRedirect(reverse('common:index'))
 	else:
-		form = BrotherForm(request.GET, instance=brother)
+		form = BrotherForm(instance=brother)
 	if form.errors:
-		errors = ['{attri}: {error}'.format(error=', '.join(messages), attri=attri) for attri, messages in form.errors.items()]
-		pdb.set_trace()
-		context['error'] = ' '.join(errors)
+		error = 'Error, please invalid input.'
+	else:
+		error = None
 	context['form'] = form
+	context['error'] = error
 	return render(request, 'registration/profile.html', context=context)
 
 @transaction.atomic
