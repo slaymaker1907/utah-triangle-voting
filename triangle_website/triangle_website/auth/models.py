@@ -3,6 +3,11 @@ from django.contrib.auth.models import User
 from django import forms
 from django.core.validators import RegexValidator
 
+def get_enum_string(variable, all):
+    for num, string in all:
+        if num == variable:
+            return string
+
 class AcademicYear:
     unknown = 0
     freshman = 1
@@ -23,10 +28,12 @@ class MemberStatus:
     unknown = 0
     pledge = 1
     active = 2
+    alumni = 3
     ALL = (
         (unknown, 'Unknown'),
         (pledge, 'Pledge'),
         (active, 'Active'),
+        (alumni, 'Alumni')
     )
 
 class TShirtSize:
@@ -65,6 +72,18 @@ class Brother(Model):
     student_orgs = TextField(default='', blank=True)
     allergies = TextField(default='', blank=True)
     interests = TextField(default='', blank=True)
+
+    @property
+    def formatted_year(self):
+        return get_enum_string(self.year, AcademicYear.ALL)
+
+    @property
+    def formatted_member_status(self):
+        return get_enum_string(self.member_status, MemberStatus.ALL)
+
+    @property
+    def formatted_tshirt(self):
+        return get_enum_string(self.tshirt, TShirtSize.ALL)
 
 class BrotherForm(forms.ModelForm):
     class Meta:
