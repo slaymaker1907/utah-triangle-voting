@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-	url(r'^voting/', include('voting.urls')),
+	url(r'^voting/', include('triangle_website.voting.urls')),
     url(r'^admin/', admin.site.urls),
-	url(r'^$', include('voting.default_urls'))
+	url('^auth/', include('triangle_website.auth.urls')),
+	url(r'^', include('triangle_website.common.urls')),
 ]

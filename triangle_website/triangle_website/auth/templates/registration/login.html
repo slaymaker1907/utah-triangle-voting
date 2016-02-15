@@ -1,0 +1,46 @@
+{% extends "common/header.html" %}
+{% load staticfiles %}
+{% block title %}Triangle Sign In{% endblock %}
+{% block content %}
+<link href="{% static 'auth/css/signin.css' %}" rel="stylesheet">
+{% include "common/navbar.html" %}
+<div class="container theme-showcase" role="main">
+	{% if form.errors %}
+	<div class="alert alert-danger" role="alert">
+		<strong>Error:</strong> {{error}}
+	</div>
+	{% endif %}
+
+	{% if next %}
+		<div class="alert alert-danger" role="alert">
+			{% if user.is_authenticated %}
+			Your account doesn't have access to this page. To proceed, please login with an account that has access.
+			{% else %}
+			Please login to see this page.
+			{% endif %}
+		</div>
+	{% endif %}
+
+	 <form class="form-signin" action="{% url 'login' %}" method="POST">
+		{% csrf_token %}
+		<h2 class="form-signin-heading">Please sign in</h2>
+		{{ form.username.label_tag }}
+		{{form.username}}
+		{{form.password.label_tag}}
+		{{form.password}}
+		<input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'common:index' %}{% endif %}" />
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+	</form>
+
+	<a class="btn btn-lg btn-default" href="{% url 'password_reset' %}">Reset Password</a>
+</div> <!-- /container -->
+{% endblock %} <!-- Ending the content block -->
+{% block endscripts %}
+<script src="{% static 'common/js/forms-fix.js' %}"></script>
+<script>$(document).ready(function()
+{
+	$('label').attr('class', 'sr-only');
+}
+);
+</script>
+{% endblock %}

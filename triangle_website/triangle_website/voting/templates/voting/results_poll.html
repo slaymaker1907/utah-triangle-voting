@@ -1,0 +1,44 @@
+{% extends "voting/results_base.html" %}
+{% load voting_tags %}
+{% load static %}
+{% block vote_results %}
+	{% for question in election.question_set.all %}
+	<div ques_id='{{question.id}}'>
+		<hr></hr>
+		<h3>{{question.name}}</h3>
+		<hr></hr>
+		
+		<div class="row">
+			<div class="col-sm-4">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h3 class="panel-title">Results</h3>
+					</div>
+					<ul class="list-group">
+						{% for choice in question.choice_set.all %}
+						<li class="list-group-item" choice='{{choice.id}}' choice_text='{{choice.text}}' vote_count='{{choice.sum_rank}}'>
+							<h4 class="list-group-item-heading">{{choice.text}}</h4>
+							<p class="list-group-item-text">{{choice.sum_rank}} Votes</p>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Graphical Data</h3>
+					</div>
+					<div>
+						<canvas id="chart{{question.id}}"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+{% endblock %}
+{% block endscripts %}
+<script src="{% static 'voting/js/chart.min.js' %}"></script>
+<script src="{% static 'voting/js/plot_results.js' %}"></script>
+{% endblock %}

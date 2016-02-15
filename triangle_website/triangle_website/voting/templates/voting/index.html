@@ -1,0 +1,78 @@
+{% extends "common/header.html" %}
+{% block title %}Utah Triangle Voting{% endblock %}
+{% block content %}
+{% include "common/navbar.html" with is_voting=True %}
+<div class="container theme-showcase" role="main">
+	{% if error %}
+	<div class="alert alert-danger" role="alert">
+		<strong>Error:</strong> {{error}}
+	</div>
+	{% endif %}
+
+	<!-- Main jumbotron for a primary marketing message or call to action -->
+	<div class="jumbotron">
+		<h1>Voting for Utah Triangle</h1>
+		<p>Examine the various votes available as well as the results of completed elections. If a vote isn't visible, ensure that you have the correct permissions to see the vote or search for the vote using the vote's ID.{% if user.is_authenticated and user.is_active %}<a class="btn btn-primary btn-lg" href="{% url 'voting:new' %}" role="button">Create New Vote <span class="glyphicon glyphicon-plus"></span></a>{% else %} Sign up today to create new votes.{% endif %}</p>
+	</div>
+	
+	{% if user.is_authenticated and user.is_active %}
+	<hr></hr>
+	<h3>Search for votes</h3>
+	
+	<!--Do a POST for security since POST parameters are encrypted with https but not GET parameters-->
+	<form role="form" action="{% url 'voting:search' %}" method="POST">
+		{% csrf_token %}
+		<div class="form-group">
+			<label for="vote_id">Vote ID</label>
+			<input type="text" class="form-control" id="vote_id" placeholder="Enter vote ID" name="vote_id"></input>
+		</div>
+		<div class="form-group">
+			<label for="passcode">Passcode (if required)</label>
+			<input type="text" class="form-control" id="passcode" placeholder="Enter passcode if vote uses passcode" name="passcode"></input>
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary">Search</button>
+		</div>
+	</form>
+	
+	<hr></hr>
+
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">Current Votes</h3>
+				</div>
+				<div class="panel-body">
+					<ul class="list-group">
+						{% for vote in current_votes %}
+						<a href="{% url 'voting:vote' vote.id %}" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #{{vote.id}}</h4>
+							<p class="list-group-item-text">{{vote.name}}</p>
+						</a>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">Completed Votes <button type="button" class="btn btn-info btn-xs" onclick="window.location='{% url 'voting:history' 1 %}'; return false;"><span class="glyphicon glyphicon-stats"></span> Full History</button></h3>
+				</div>
+				<div class="panel-body">
+					<ul class="list-group">
+						{% for vote in complete_votes %}
+						<a href="{% url 'voting:results' vote.id %}" class="list-group-item">
+							<h4 class="list-group-item-heading">Vote #{{vote.id}}</h4>
+							<p class="list-group-item-text">{{vote.name}}</p>
+						</a>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div> <!-- /container -->
+{% endblock %} <!-- Ending the content block -->
