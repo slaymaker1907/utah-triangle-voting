@@ -4,7 +4,15 @@ from collections import defaultdict
 from django.contrib.auth import authenticate
 import uuid
 import collections
+from contextlib import contextmanager
+from django.db import reset_queries, connection
 
+@contextmanager
+def measure_queries():
+    start = len(connection.queries)
+    yield
+    total = len(connection.queries) - start
+    print(total)
 
 # Not currently a full model with access to DB.
 class Election(models.Model):
@@ -84,9 +92,9 @@ class Voter(models.Model):
 
 def get_vote_tabulator(question):
         # Get all vote choices -- necessary just in case no votes for candidate.
-        choices = set(question.choice_set.all())
+        choices = set(question.choice_set.all().select_related('question'))
         # Get all votes.
-        votes_database = Vote.objects.all().filter(choice__question=question)
+        votes_database = Vote.objects.all().filter(choice__question=question).select_related('choice').select_related('voter')
         votes = collections.defaultdict(set)
         for vote in votes_database:
             votes[vote.voter].add(vote)
@@ -189,7 +197,7 @@ class AnonVoter(models.Model):
     def get_vote(self, question_arg):
         result = dict()
         # Double underscore is to make python happy and is pretty much like choice.question.
-        all_votes = Vote.objects.filter(choice__question=question_arg).filter(voter=self)
+        all_votes = Vote.objects.filter(choice__question=question_arg).filter(voter=self).select_related('choice')
         for vote in all_votes:
             result[vote.choice.id] = vote.rank
         return result
