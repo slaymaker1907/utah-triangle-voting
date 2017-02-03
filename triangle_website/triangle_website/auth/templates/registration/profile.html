@@ -1,0 +1,20 @@
+{% extends "common/header.html" %}
+{% block title %}{{brother.user.first_name}}'s Profile{% endblock %}
+{% block content %}
+{% include 'common/navbar.html' %}
+<div class="container theme-showcase" role="main">
+
+	{% include 'common/error.html' %}
+
+  <form role="form" action="{% url 'profile' %}" method="POST">
+		{% csrf_token %}
+    {{form}}
+    <button type="submit" class="btn btn-default">Submit</button>
+  </form>
+
+</div> <!-- /container -->
+{% endblock %} <!-- Ending the content block -->
+{% block endscripts %}
+{% load static %}
+<script src="{% static 'common/js/forms-fix.js' %}"></script>
+{% endblock %}

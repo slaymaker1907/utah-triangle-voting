@@ -1,0 +1,12 @@
+<div class="row">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Voters in this election</h3>
+		</div>
+		<ul class="list-group">
+		{% for voter in election.get_all_voters %}
+			<li class="list-group-item">{{voter.user.username}}:{{voter.user.first_name}} {{voter.user.last_name}}</li>
+		{% endfor %}
+		</ul>
+	</div>
+</div>

@@ -1,0 +1,10 @@
+{% extends "common/header.html" %}
+{% block title %}{{subject}}{% endblock %}
+{% block content %}
+{% include "common/navbar.html" %}
+<div class="container theme-showcase" role="main">
+	<h1>{{subject}}</h1>
+	<hr></hr>
+	<p>{{body}}</p>
+</div> <!-- /container -->
+{% endblock %} <!-- Ending the content block -->
